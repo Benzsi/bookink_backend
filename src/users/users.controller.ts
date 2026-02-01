@@ -38,6 +38,10 @@ export class UsersController {
     if (existing) {
       throw new ConflictException('Username already taken');
     }
+    const existingEmail = await this.usersService.findByEmail(dto.email);
+    if (existingEmail) {
+      throw new ConflictException('Email already taken');
+    }
     return this.usersService.createUserWithPassword(dto);
   }
 
@@ -55,6 +59,13 @@ export class UsersController {
       const existing = await this.usersService.findByUsername(dto.username);
       if (existing && existing.id !== id) {
         throw new ConflictException('Username already taken');
+      }
+    }
+
+    if (dto.email) {
+      const existingEmail = await this.usersService.findByEmail(dto.email);
+      if (existingEmail && existingEmail.id !== id) {
+        throw new ConflictException('Email already taken');
       }
     }
 

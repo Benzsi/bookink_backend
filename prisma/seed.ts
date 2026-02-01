@@ -4,13 +4,14 @@ import * as bcrypt from 'bcrypt';
 async function main() {
   const prisma = new PrismaClient();
   const username = 'admin';
+  const email = 'admin@bookink.hu';
   const password = 'admin';
   const passwordHash = await bcrypt.hash(password, 10);
 
   await prisma.user.upsert({
     where: { username },
-    update: { passwordHash, role: Role.ADMIN },
-    create: { username, passwordHash, role: Role.ADMIN },
+    update: { passwordHash, role: Role.ADMIN, email },
+    create: { username, email, passwordHash, role: Role.ADMIN },
   });
 
   await prisma.$disconnect();

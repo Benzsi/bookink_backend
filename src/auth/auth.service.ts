@@ -38,14 +38,23 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<SafeUser> {
-    const user = await this.usersService.findByUsername(dto.username);
+    // Ellenőrizzük, hogy email cím-e a bemenet
+    const isEmail = dto.username.includes('@');
+    
+    let user: User | null;
+    if (isEmail) {
+      user = await this.usersService.findByEmail(dto.username);
+    } else {
+      user = await this.usersService.findByUsername(dto.username);
+    }
+
     if (!user) {
-      throw new UnauthorizedException('Hibás felhasználónév vagy jelszó');
+      throw new UnauthorizedException('Hibás felhasználónév/email vagy jelszó');
     }
 
     const isValid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!isValid) {
-      throw new UnauthorizedException('Hibás felhasználónév vagy jelszó');
+      throw new UnauthorizedException('Hibás felhasználónév/email vagy jelszó');
     }
 
     return this.sanitizeUser(user);

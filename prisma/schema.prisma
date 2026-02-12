@@ -18,6 +18,20 @@ enum Role {
   ADMIN
 }
 
+enum Genre {
+  VALLÁSI_IRAT
+  EPOSZ
+  REGÉNY
+  TRAGÉDIA
+  VÍGJÁTÉK
+}
+
+enum LiteraryForm {
+  EPIKA
+  DRÁMA
+  LIRIKA
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   username     String   @unique
@@ -26,4 +40,19 @@ model User {
   role         Role     @default(USER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Book {
+  id              Int             @id @default(autoincrement())
+  sequenceNumber  Int             @unique
+  title           String
+  author          String
+  coverUrl        String?
+  commentId       Int?            @unique
+  rating          Int?
+  genre           Genre
+  literaryForm    LiteraryForm
+  lyricNote       String?         @db.Text
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }

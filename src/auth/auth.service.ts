@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -9,14 +10,17 @@ type SafeUser = Omit<User, 'passwordHash'>;
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   private sanitizeUser(user: User): SafeUser {
     const { passwordHash, ...rest } = user;
     return rest;
   }
 
-  async register(dto: RegisterDto): Promise<SafeUser> {
+  async register(dto: RegisterDto): Promise<{ user: SafeUser; token: string }> {
     const existingUser = await this.usersService.findByUsername(dto.username);
     if (existingUser) {
       throw new ConflictException('A felhasználónév már foglalt');
@@ -34,10 +38,13 @@ export class AuthService {
       passwordHash,
     });
 
-    return this.sanitizeUser(user);
+    const safeUser = this.sanitizeUser(user);
+    const token = this.jwtService.sign({ sub: user.id, username: user.username });
+
+    return { user: safeUser, token };
   }
 
-  async login(dto: LoginDto): Promise<SafeUser> {
+  async login(dto: LoginDto): Promise<{ user: SafeUser; token: string }> {
     // Ellenőrizzük, hogy email cím-e a bemenet
     const isEmail = dto.username.includes('@');
     
@@ -57,6 +64,9 @@ export class AuthService {
       throw new UnauthorizedException('Hibás felhasználónév/email vagy jelszó');
     }
 
-    return this.sanitizeUser(user);
+    const safeUser = this.sanitizeUser(user);
+    const token = this.jwtService.sign({ sub: user.id, username: user.username });
+
+    return { user: safeUser, token };
   }
 }

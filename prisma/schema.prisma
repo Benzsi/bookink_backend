@@ -38,6 +38,7 @@ model User {
   email        String   @unique
   passwordHash String
   role         Role     @default(USER)
+  ratings      Rating[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -53,6 +54,20 @@ model Book {
   genre           Genre
   literaryForm    LiteraryForm
   lyricNote       String?         @db.Text
+  ratings         Rating[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  rating    Int      // 1-5 csillag
+  userId    Int
+  bookId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, bookId]) // Egy user csak egyszer értékelhet egy könyvet
 }

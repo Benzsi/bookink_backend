@@ -55,8 +55,10 @@ model Book {
   literaryForm    LiteraryForm
   lyricNote       String?         @db.Text
   ratings         Rating[]
+    
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+  pageCount       Int
 }
 
 model Rating {

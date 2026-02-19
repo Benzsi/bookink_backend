@@ -11,6 +11,7 @@ type BookData = {
   genre: Genre;
   literaryForm: LiteraryForm;
   lyricNote: string;
+  pageCount: number;
 };
 
 const books: BookData[] = [
@@ -23,6 +24,7 @@ const books: BookData[] = [
     genre: Genre.VALLÁSI_IRAT,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'Ősi szavak, melyek csendben formálták az emberi lelket.',
+    pageCount: 1200,
   },
   {
     sequenceNumber: 2,
@@ -33,6 +35,7 @@ const books: BookData[] = [
     genre: Genre.VALLÁSI_IRAT,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'A hit ritmusa, mely a sivatag csendjéből szól.',
+    pageCount: 600,
   },
   {
     sequenceNumber: 3,
@@ -43,6 +46,7 @@ const books: BookData[] = [
     genre: Genre.EPOSZ,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'Vér és dicsőség zeng a hősök árnyékában.',
+    pageCount: 704,
   },
   {
     sequenceNumber: 4,
@@ -53,6 +57,7 @@ const books: BookData[] = [
     genre: Genre.EPOSZ,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'Egy hosszú út, ahol az otthon emléke világít.',
+    pageCount: 560,
   },
   {
     sequenceNumber: 5,
@@ -63,6 +68,7 @@ const books: BookData[] = [
     genre: Genre.EPOSZ,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'Pokol, purgatórium, menny – és egy emberi lélek.',
+    pageCount: 800,
   },
   {
     sequenceNumber: 6,
@@ -73,6 +79,7 @@ const books: BookData[] = [
     genre: Genre.REGÉNY,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'Egy álmodozó lovag harca a világ józanságával.',
+    pageCount: 992,
   },
   {
     sequenceNumber: 7,
@@ -83,6 +90,7 @@ const books: BookData[] = [
     genre: Genre.TRAGÉDIA,
     literaryForm: LiteraryForm.DRÁMA,
     lyricNote: 'Gondolat és kétség között vergődő királyfi.',
+    pageCount: 400,
   },
   {
     sequenceNumber: 8,
@@ -93,6 +101,7 @@ const books: BookData[] = [
     genre: Genre.TRAGÉDIA,
     literaryForm: LiteraryForm.DRÁMA,
     lyricNote: 'Szerelem, mely gyorsabban él, mint ameddig tarthatna.',
+    pageCount: 320,
   },
   {
     sequenceNumber: 9,
@@ -103,6 +112,7 @@ const books: BookData[] = [
     genre: Genre.TRAGÉDIA,
     literaryForm: LiteraryForm.DRÁMA,
     lyricNote: 'A hatalom suttogása vért hagy maga után.',
+    pageCount: 350,
   },
   {
     sequenceNumber: 10,
@@ -113,6 +123,7 @@ const books: BookData[] = [
     genre: Genre.VÍGJÁTÉK,
     literaryForm: LiteraryForm.DRÁMA,
     lyricNote: 'Tündérek játéka, ahol az álmok összekeverednek.',
+    pageCount: 300,
   },
   {
     sequenceNumber: 11,
@@ -123,6 +134,7 @@ const books: BookData[] = [
     genre: Genre.REGÉNY,
     literaryForm: LiteraryForm.EPIKA,
     lyricNote: 'Szív és ész finom tánca egy csésze tea mellett.',
+    pageCount: 432,
   },
 ];
 

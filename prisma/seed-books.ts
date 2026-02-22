@@ -138,7 +138,7 @@ const books: BookData[] = [
   },
 ];
 
-async function main() {
+export async function seedBooks() {
   console.log('Könyv adatok feltöltése megkezdődött...');
 
   for (const book of books) {
@@ -149,12 +149,5 @@ async function main() {
     });
   }
 
-  console.log('✓ Könyv adatok sikeresen feltöltve!');
-  await prisma.$disconnect();
+  console.log('Könyv adatok sikeresen feltöltve!');
 }
-
-void main().catch(async (err) => {
-  console.error(err);
-  await prisma.$disconnect();
-  process.exit(1);
-});

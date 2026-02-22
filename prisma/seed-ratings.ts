@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function main() {
+export async function seedRatings() {
   const books = await prisma.book.findMany();
   let users = await prisma.user.findMany();
 
@@ -39,12 +39,5 @@ async function main() {
     }
   }
 
-  await prisma.$disconnect();
-  console.log('✓ Rating adatok sikeresen feltöltve!');
+  console.log('Rating adatok sikeresen feltöltve!');
 }
-
-void main().catch(async (err) => {
-  console.error(err);
-  await prisma.$disconnect();
-  process.exit(1);
-});

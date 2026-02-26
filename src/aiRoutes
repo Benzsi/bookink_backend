@@ -1,0 +1,18 @@
+import express from 'express';
+import { parseFilterWithAI } from 'src/aiService';
+
+const router = express.Router();
+
+router.post('/ai-filter', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ error: "Nincs megadva szöveg" });
+
+    const filters = await parseFilterWithAI(prompt);
+    res.json(filters);
+  } catch (error) {
+    res.status(500).json({ error: "AI feldolgozási hiba" });
+  }
+});
+
+export default router;

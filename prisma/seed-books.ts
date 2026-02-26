@@ -1,5 +1,8 @@
 import { PrismaClient, Genre, LiteraryForm } from '@prisma/client';
 
+//Cseréljük le a könyveket mai könyvekre és legyen több 
+//a konyv hatuljara csinaljunk egy leiras gombot
+
 const prisma = new PrismaClient();
 
 type BookData = {

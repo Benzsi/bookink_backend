@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function seedRatings() {
+  // Létező értékelések törlése
+  await prisma.rating.deleteMany();
+
   const books = await prisma.book.findMany();
   let users = await prisma.user.findMany();
 

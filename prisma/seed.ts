@@ -2,6 +2,7 @@ import { PrismaClient, Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { seedBooks } from './seed-books';
 import { seedRatings } from './seed-ratings';
+import { seedComments } from './seed-comments';
 
 async function main() {
   const prisma = new PrismaClient();
@@ -30,6 +31,9 @@ async function main() {
     // 3. Értékelések generálása
     console.log('\n3. Értékelések generálása...');
     await seedRatings();
+
+    // 4. Kommentek generálása
+    await seedComments();
 
     console.log('\nSeeding sikeresen befejezve!');
   } catch (error) {

@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
+//TODO:
+//Több komment és legyen random hogy melyikhez mennyi jelenik meg!
+//Egy könyvhöz 0-5 komment legyen random, és legyen egy random user aki írta a kommentet.
+//Lehessen likeolni a kommenteket, de ez majd később elég, most csak a kommentek létrehozása a cél.
+
 const prisma = new PrismaClient();
 
 export async function seedComments() {

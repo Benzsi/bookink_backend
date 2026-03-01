@@ -3,11 +3,27 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { static as expressStatic } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
   );
+
+  const publicPathCandidates = [
+    join(__dirname, '..', 'public'),
+    join(process.cwd(), 'public'),
+    join(process.cwd(), 'bookink_backend', 'public'),
+  ];
+  const publicPath =
+    publicPathCandidates.find((candidate) => existsSync(candidate)) ||
+    publicPathCandidates[0];
+
+  app.useStaticAssets(publicPath);
+  app.use('/covers', expressStatic(join(publicPath, 'covers')));
+  app.use(expressStatic(publicPath));
 
   app.enableCors({
     origin: '*',

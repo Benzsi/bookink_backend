@@ -22,7 +22,7 @@ const books: BookData[] = [
     sequenceNumber: 1,
     title: 'Biblia',
     author: 'Ismeretlen',
-    coverUrl: 'https://covers.openlibrary.org/b/olid/OL27448W-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-01-biblia.jpg',
     commentId: 1001,
     genre: Genre.VALLÁSI_IRAT,
     literaryForm: LiteraryForm.EPIKA,
@@ -33,7 +33,7 @@ const books: BookData[] = [
     sequenceNumber: 2,
     title: 'Korán',
     author: 'Ismeretlen',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780199535958-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-02-koran.jpg',
     commentId: 1002,
     genre: Genre.VALLÁSI_IRAT,
     literaryForm: LiteraryForm.EPIKA,
@@ -44,7 +44,7 @@ const books: BookData[] = [
     sequenceNumber: 3,
     title: 'Iliász',
     author: 'Homérosz',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0140449191-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-03-iliasz.jpg',
     commentId: 1003,
     genre: Genre.EPOSZ,
     literaryForm: LiteraryForm.EPIKA,
@@ -55,7 +55,7 @@ const books: BookData[] = [
     sequenceNumber: 4,
     title: 'Odüsszeia',
     author: 'Homérosz',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0140268863-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-04-odusszeia.jpg',
     commentId: 1004,
     genre: Genre.EPOSZ,
     literaryForm: LiteraryForm.EPIKA,
@@ -66,7 +66,7 @@ const books: BookData[] = [
     sequenceNumber: 5,
     title: 'Isteni színjáték',
     author: 'Dante Alighieri',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0142437220-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-05-isteni-szinjatek.jpg',
     commentId: 1005,
     genre: Genre.EPOSZ,
     literaryForm: LiteraryForm.EPIKA,
@@ -77,7 +77,7 @@ const books: BookData[] = [
     sequenceNumber: 6,
     title: 'Don Quijote',
     author: 'Miguel de Cervantes',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0060934344-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-06-don-quijote.jpg',
     commentId: 1006,
     genre: Genre.REGÉNY,
     literaryForm: LiteraryForm.EPIKA,
@@ -88,7 +88,7 @@ const books: BookData[] = [
     sequenceNumber: 7,
     title: 'Hamlet',
     author: 'William Shakespeare',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0743477111-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-07-hamlet.jpg',
     commentId: 1007,
     genre: Genre.TRAGÉDIA,
     literaryForm: LiteraryForm.DRÁMA,
@@ -99,7 +99,7 @@ const books: BookData[] = [
     sequenceNumber: 8,
     title: 'Rómeó és Júlia',
     author: 'William Shakespeare',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0743477111-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-08-romeo-es-julia.jpg',
     commentId: 1008,
     genre: Genre.TRAGÉDIA,
     literaryForm: LiteraryForm.DRÁMA,
@@ -110,7 +110,7 @@ const books: BookData[] = [
     sequenceNumber: 9,
     title: 'Macbeth',
     author: 'William Shakespeare',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0743477103-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-09-macbeth.jpg',
     commentId: 1009,
     genre: Genre.TRAGÉDIA,
     literaryForm: LiteraryForm.DRÁMA,
@@ -121,7 +121,7 @@ const books: BookData[] = [
     sequenceNumber: 10,
     title: 'Szentivánéji álom',
     author: 'William Shakespeare',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/074347754X-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-10-szentivaneji-alom.jpg',
     commentId: 1010,
     genre: Genre.VÍGJÁTÉK,
     literaryForm: LiteraryForm.DRÁMA,
@@ -132,7 +132,7 @@ const books: BookData[] = [
     sequenceNumber: 11,
     title: 'Büszkeség és balítélet',
     author: 'Jane Austen',
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/0141439513-L.jpg',
+    coverUrl: 'http://localhost:3000/covers/book-11-buszkeseg-es-balitelet.jpg',
     commentId: 1011,
     genre: Genre.REGÉNY,
     literaryForm: LiteraryForm.EPIKA,
@@ -153,4 +153,17 @@ export async function seedBooks() {
   }
 
   console.log('Könyv adatok sikeresen feltöltve!');
+}
+
+const isDirectExecution = (process.argv[1] || '').includes('seed-books.ts');
+
+if (isDirectExecution) {
+  void seedBooks()
+    .catch((error) => {
+      console.error('Hiba történt a könyvek seedelése közben:', error);
+      process.exitCode = 1;
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
 }

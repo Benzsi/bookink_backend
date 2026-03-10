@@ -7,6 +7,9 @@ import { AuthModule } from './auth/auth.module';
 import { BooksModule } from './books/books.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { CommentsModule } from './comments/comments.module';
+import { AiModule } from './ai/ai.module';
+import { AiService } from './ai/ai.service';
+import { PrismaService } from './prisma.service';
 
 @Module({
   imports: [
@@ -18,8 +21,9 @@ import { CommentsModule } from './comments/comments.module';
     BooksModule,
     RatingsModule,
     CommentsModule,
+    AiModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AiService, PrismaService],
 })
 export class AppModule {}

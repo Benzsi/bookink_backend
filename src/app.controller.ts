@@ -1,35 +1,33 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from './app.service';
-import { parseFilterWithAI } from './aiService';
+import { AiService } from './ai/ai.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly aiService: AiService,
+  ) {}
 
   @Get()
   getHello() {
     return { message: 'Bookink API is running' };
   }
 
+  // Régi endpoint kompatibilitás a frontendhez
   @Post('ai-filter')
-  async aiFilter(@Body() body: { prompt: string }) {
-    console.log('📝 AI filter kérés érkezett:', body.prompt);
-    
-    if (!body.prompt || body.prompt.trim() === '') {
+  async aiFilter(@Body() body: { prompt?: string; query?: string }) {
+    const input = body.prompt || body.query;
+    if (!input || !input.trim()) {
       return { error: 'Üres keresési kérés' };
     }
-    
     try {
-      const filters = await parseFilterWithAI(body.prompt);
-      console.log('✅ Szűrők visszaadva:', filters);
-      return filters;
+      return await this.aiService.searchBooks(input.trim());
     } catch (error: any) {
-      console.error('❌ AI feldolgozás hiba az app.controller-ben:', error?.message || error);
-      return { 
-        error: 'AI feldolgozási hiba', 
-        details: error?.message || 'Ismeretlen hiba',
-        hint: 'Ellenőrizd az API key-t az .env fájlban'
-      };
+      if (error?.__aiUnavailable) {
+        return { error: 'AI_UNAVAILABLE', message: 'Az AI keresés átmenetileg nem elérhető. Próbáld újra később.' };
+      }
+      return { error: 'AI feldolgozási hiba', details: error?.message };
     }
   }
 }

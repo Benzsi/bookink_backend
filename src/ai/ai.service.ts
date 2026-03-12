@@ -29,11 +29,11 @@ export class AiService {
       const recommendedIds = await recommendBooksWithAI(query, booksWithRatings);
       return booksWithRatings.filter(b => recommendedIds.includes(b.id));
     } catch (error: any) {
-      console.warn('⚠️ AI nem elérhető, szöveges fallback keresés indul...');
-      // Gyors szöveges keresés cím/szerző alapján (AI nélkül is működik)
+      console.warn('⚠️ AI nem elérhető, szöveges játék-keresés indul...');
+      // Gyors szöveges keresés cím/fejlesztő alapján (AI nélkül is működik)
       const textResults = this.textFallbackSearch(query, booksWithRatings);
       if (textResults.length > 0) return textResults;
-      // Ha szöveg alapján sem találtunk (pl. karakternév) → AI szükséges
+      // Ha szöveg alapján sem találtunk → AI szükséges
       throw { __aiUnavailable: true, message: error?.message };
     }
   }

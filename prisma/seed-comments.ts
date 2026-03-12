@@ -14,52 +14,52 @@ export async function seedComments() {
     {
       userId: 1,
       bookId: 1,
-      content: 'Fantasztikus mű! Dante útirajza a pokol, purgatórium és paradicsom világán keresztül páratlan élmény. A középkori világkép és a keresztény teológia mesteriesen fonódik össze ebben a nagy eposzban.'
+      content: 'A Hollow Knight a legjobb indie játék amit valaha játszottam. A világ felépítése, a boss harcok és a hangulat egyedülállóan gyönyörű. Órányi felfedezés vár mindenkire!'
     },
     {
       userId: 1,
       bookId: 2,
-      content: 'Homérosz klasszikus eposza ma is lenyűgöző. Odüsszeusz hazatérésének története nemcsak kalandregény, hanem az emberi kitartás és bölcsesség dicsőítése is.'
+      content: 'A Stardew Valley egy igazi lelki feltöltődés. Egyetlen fejlesztő hozta létre, mégis annyi tartalom van benne, hogy hetekig nem tudtam letenni. Co-op módban barátokkal különösen élvezetes.'
     },
     {
       userId: 1,
       bookId: 3,
-      content: 'Mikszáth mesterműve a magyar irodalom egyik legszórakoztatóbb darabja. A magyar társadalom kritikája humor köntösében - zseniális!'
+      content: 'A Celeste nem csak egy platformer, hanem egy mélyen érzelmes történet a szorongásról és az önelfogadásról. A pixelgrafika és a zene tökéletes összhangban van.'
     },
     {
       userId: 1,
       bookId: 4,
-      content: 'Szophóklész tragédiája időtlen remekművet. Oidipusz sorsa a végzet és az emberi akarat összeütközésének megrendítő példája.'
+      content: 'Az Among Us egyszerű koncepció, mégis végtelen szórakozást nyújt. Baráti társaságban órákon át nevettünk – és gyanakodtunk egymásra.'
     },
     {
       userId: 1,
       bookId: 5,
-      content: 'Molière vígjátéka szellemes és mély egyszerre. Tartuffe alakja a képmutatás örök szimbólumává vált - ma is aktuális.'
+      content: 'A Hades a roguelite műfaj új csúcsa. Minden halál után egyre erősebb leszel, és a sztori is folytatódik. Zagreus karaktere és a görög mitológia brilliánsan van feldolgozva.'
     },
     {
       userId: 1,
       bookId: 6,
-      content: 'Vörösmarty eposzának nyelvi szépsége és hazaszeretete megható. Zalán futása a magyar nemzeti irodalom alapköve.'
+      content: 'Az Undertale megváltoztatta azt, ahogyan a játékokra tekintek. Az irónia, a humor, az érzelem és a meta-elemek csodálatosan olvadnak össze. Nem megölni is egy opció – és ez mindent megváltoztat.'
     },
     {
       userId: 1,
       bookId: 7,
-      content: 'Arany János balladái a magyar költészet csúcspontjai. A történelem és a népi hagyományok páratlan szintézise.'
+      content: 'A Cuphead vizuálisan lenyűgöző – mintha egy 1930-as évekbeli rajzfilmbe kerültél volna. A bosszantóan nehéz boss harcok ellenére teljesen addiktív.'
     },
     {
       userId: 1,
       bookId: 8,
-      content: 'Petőfi Sándor lírája örökké friss és őszinte. A természet és a szerelem költője - egyszerű, mégis zseniális.'
+      content: 'A Limbo atmoszférája felülmúlhatatlan. Fekete-fehér képi világa és néma hangulata más játékoknál sosem látott szorongást ad. Rövid, de feledhetetlen élmény.'
     },
     {
       userId: 1,
       bookId: 9,
-      content: 'Ady Endre forradalmian új hangot hozott a magyar irodalomba. Versei mélyen személyesek, mégis uniwersálisak.'
+      content: 'Az Ori and the Blind Forest a legszebb indie játék amit valaha láttam. A zenéje és a grafika együtt szinte síratott meg. Tökéletes platformer és megható történet egyszerre.'
     },
     {
       userId: 1,
       bookId: 10,
-      content: 'József Attila költészete a modern kor szorongásait és reményeit fogalmazza meg páratlan erővel és szépséggel.'
+      content: 'A Terraria egyike a leghosszabb módon játszható indie játékoknak. Barátokkal együtt egyszerűen végtelen – építs, ásj, harcolj főnökök ellen és fedezz fel minden zugot!'
     }
   ];
 

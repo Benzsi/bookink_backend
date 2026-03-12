@@ -1,8 +1,5 @@
 import { PrismaClient, Genre, LiteraryForm } from '@prisma/client';
 
-//Cseréljük le a könyveket mai könyvekre és legyen több 
-//a konyv hatuljara csinaljunk egy leiras gombot
-
 const prisma = new PrismaClient();
 
 type BookData = {
@@ -20,129 +17,129 @@ type BookData = {
 const books: BookData[] = [
   {
     sequenceNumber: 1,
-    title: 'Biblia',
-    author: 'Ismeretlen',
-    coverUrl: 'http://localhost:3000/covers/book-01-biblia.jpg',
+    title: 'Hollow Knight',
+    author: 'Team Cherry',
+    coverUrl: 'http://localhost:3000/covers/game-01-hollow-knight.jpg',
     commentId: 1001,
-    genre: Genre.VALLÁSI_IRAT,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'Ősi szavak, melyek csendben formálták az emberi lelket.',
-    pageCount: 1200,
+    genre: Genre.ADVENTURE,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Sötét katakombák mélyén egy apró lovag keresi az igazságot.',
+    pageCount: 2017,
   },
   {
     sequenceNumber: 2,
-    title: 'Korán',
-    author: 'Ismeretlen',
-    coverUrl: 'http://localhost:3000/covers/book-02-koran.jpg',
+    title: 'Stardew Valley',
+    author: 'ConcernedApe',
+    coverUrl: 'http://localhost:3000/covers/game-02-stardew-valley.jpg',
     commentId: 1002,
-    genre: Genre.VALLÁSI_IRAT,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'A hit ritmusa, mely a sivatag csendjéből szól.',
-    pageCount: 600,
+    genre: Genre.SANDBOX,
+    literaryForm: LiteraryForm.CO_OP,
+    lyricNote: 'Hagyd el a várost – a farm és a természet visszavár.',
+    pageCount: 2016,
   },
   {
     sequenceNumber: 3,
-    title: 'Iliász',
-    author: 'Homérosz',
-    coverUrl: 'http://localhost:3000/covers/book-03-iliasz.jpg',
+    title: 'Celeste',
+    author: 'Maddy Thorson & Noel Berry',
+    coverUrl: 'http://localhost:3000/covers/game-03-celeste.jpg',
     commentId: 1003,
-    genre: Genre.EPOSZ,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'Vér és dicsőség zeng a hősök árnyékában.',
-    pageCount: 704,
+    genre: Genre.PLATFORMER,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Egy hegy, ezer bukás – és a belső démonok legyőzése.',
+    pageCount: 2018,
   },
   {
     sequenceNumber: 4,
-    title: 'Odüsszeia',
-    author: 'Homérosz',
-    coverUrl: 'http://localhost:3000/covers/book-04-odusszeia.jpg',
+    title: 'Among Us',
+    author: 'InnerSloth',
+    coverUrl: 'http://localhost:3000/covers/game-04-among-us.jpg',
     commentId: 1004,
-    genre: Genre.EPOSZ,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'Egy hosszú út, ahol az otthon emléke világít.',
-    pageCount: 560,
+    genre: Genre.PUZZLE,
+    literaryForm: LiteraryForm.MULTIPLAYER,
+    lyricNote: 'Az áruló közöttünk van – de ki az?',
+    pageCount: 2018,
   },
   {
     sequenceNumber: 5,
-    title: 'Isteni színjáték',
-    author: 'Dante Alighieri',
-    coverUrl: 'http://localhost:3000/covers/book-05-isteni-szinjatek.jpg',
+    title: 'Hades',
+    author: 'Supergiant Games',
+    coverUrl: 'http://localhost:3000/covers/game-05-hades.jpg',
     commentId: 1005,
-    genre: Genre.EPOSZ,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'Pokol, purgatórium, menny – és egy emberi lélek.',
-    pageCount: 800,
+    genre: Genre.ACTION,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Zagreus minden halállal közelebb kerül a napfényhez.',
+    pageCount: 2020,
   },
   {
     sequenceNumber: 6,
-    title: 'Don Quijote',
-    author: 'Miguel de Cervantes',
-    coverUrl: 'http://localhost:3000/covers/book-06-don-quijote.jpg',
+    title: 'Undertale',
+    author: 'Toby Fox',
+    coverUrl: 'http://localhost:3000/covers/game-06-undertale.jpg',
     commentId: 1006,
-    genre: Genre.REGÉNY,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'Egy álmodozó lovag harca a világ józanságával.',
-    pageCount: 992,
+    genre: Genre.RPG,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Senkit sem kell megölnöd – ez a te döntésed.',
+    pageCount: 2015,
   },
   {
     sequenceNumber: 7,
-    title: 'Hamlet',
-    author: 'William Shakespeare',
-    coverUrl: 'http://localhost:3000/covers/book-07-hamlet.jpg',
+    title: 'Cuphead',
+    author: 'Studio MDHR',
+    coverUrl: 'http://localhost:3000/covers/game-07-cuphead.jpg',
     commentId: 1007,
-    genre: Genre.TRAGÉDIA,
-    literaryForm: LiteraryForm.DRÁMA,
-    lyricNote: 'Gondolat és kétség között vergődő királyfi.',
-    pageCount: 400,
+    genre: Genre.ACTION,
+    literaryForm: LiteraryForm.CO_OP,
+    lyricNote: 'Az ördöggel kötött adósság – rajzfilmbe álmodva.',
+    pageCount: 2017,
   },
   {
     sequenceNumber: 8,
-    title: 'Rómeó és Júlia',
-    author: 'William Shakespeare',
-    coverUrl: 'http://localhost:3000/covers/book-08-romeo-es-julia.jpg',
+    title: 'Limbo',
+    author: 'Playdead',
+    coverUrl: 'http://localhost:3000/covers/game-08-limbo.jpg',
     commentId: 1008,
-    genre: Genre.TRAGÉDIA,
-    literaryForm: LiteraryForm.DRÁMA,
-    lyricNote: 'Szerelem, mely gyorsabban él, mint ameddig tarthatna.',
-    pageCount: 320,
+    genre: Genre.HORROR,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Szürke sötétség és csend – ahol a félelem lakik.',
+    pageCount: 2010,
   },
   {
     sequenceNumber: 9,
-    title: 'Macbeth',
-    author: 'William Shakespeare',
-    coverUrl: 'http://localhost:3000/covers/book-09-macbeth.jpg',
+    title: 'Ori and the Blind Forest',
+    author: 'Moon Studios',
+    coverUrl: 'http://localhost:3000/covers/game-09-ori-blind-forest.jpg',
     commentId: 1009,
-    genre: Genre.TRAGÉDIA,
-    literaryForm: LiteraryForm.DRÁMA,
-    lyricNote: 'A hatalom suttogása vért hagy maga után.',
-    pageCount: 350,
+    genre: Genre.ADVENTURE,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Egy erdő lelke keres utat haza a fény felé.',
+    pageCount: 2015,
   },
   {
     sequenceNumber: 10,
-    title: 'Szentivánéji álom',
-    author: 'William Shakespeare',
-    coverUrl: 'http://localhost:3000/covers/book-10-szentivaneji-alom.jpg',
+    title: 'Terraria',
+    author: 'Re-Logic',
+    coverUrl: 'http://localhost:3000/covers/game-10-terraria.jpg',
     commentId: 1010,
-    genre: Genre.VÍGJÁTÉK,
-    literaryForm: LiteraryForm.DRÁMA,
-    lyricNote: 'Tündérek játéka, ahol az álmok összekeverednek.',
-    pageCount: 300,
+    genre: Genre.SANDBOX,
+    literaryForm: LiteraryForm.MULTIPLAYER,
+    lyricNote: 'Ásni, építeni, harcolni – végtelen világ vár.',
+    pageCount: 2011,
   },
   {
     sequenceNumber: 11,
-    title: 'Büszkeség és balítélet',
-    author: 'Jane Austen',
-    coverUrl: 'http://localhost:3000/covers/book-11-buszkeseg-es-balitelet.jpg',
+    title: 'Little Nightmares',
+    author: 'Tarsier Studios',
+    coverUrl: 'http://localhost:3000/covers/game-11-little-nightmares.jpg',
     commentId: 1011,
-    genre: Genre.REGÉNY,
-    literaryForm: LiteraryForm.EPIKA,
-    lyricNote: 'Szív és ész finom tánca egy csésze tea mellett.',
-    pageCount: 432,
+    genre: Genre.HORROR,
+    literaryForm: LiteraryForm.SINGLE_PLAYER,
+    lyricNote: 'Egy kis lány menekül egy világ elől, ahol minden torz.',
+    pageCount: 2017,
   },
 ];
 
 export async function seedBooks() {
-  console.log('Könyv adatok feltöltése megkezdődött...');
+  console.log('Játék adatok feltöltése megkezdődött...');
 
   for (const book of books) {
     await prisma.book.upsert({
@@ -152,7 +149,7 @@ export async function seedBooks() {
     });
   }
 
-  console.log('Könyv adatok sikeresen feltöltve!');
+  console.log('Játék adatok sikeresen feltöltve!');
 }
 
 const isDirectExecution = (process.argv[1] || '').includes('seed-books.ts');
@@ -160,7 +157,7 @@ const isDirectExecution = (process.argv[1] || '').includes('seed-books.ts');
 if (isDirectExecution) {
   void seedBooks()
     .catch((error) => {
-      console.error('Hiba történt a könyvek seedelése közben:', error);
+      console.error('Hiba történt a játékok seedelése közben:', error);
       process.exitCode = 1;
     })
     .finally(async () => {

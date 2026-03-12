@@ -38,43 +38,44 @@ const generateWithFallback = async (prompt: string): Promise<string> => {
 
 export const recommendBooksWithAI = async (userQuery: string, books: any[]): Promise<number[]> => {
   try {
-    console.log('🤖 AI könyvajánlás megkezdődött:', userQuery);
+    console.log('🤖 AI játékajánlás megkezdődött:', userQuery);
 
     const bookList = books.map(b => ({
       id: b.id,
       title: b.title,
-      author: b.author,
+      developer: b.author,
       genre: b.genre,
-      literaryForm: b.literaryForm,
-      pageCount: b.pageCount,
-      lyricNote: b.lyricNote || '',
+      gameType: b.literaryForm,
+      releaseYear: b.pageCount,
+      tagline: b.lyricNote || '',
     }));
 
-    const prompt = `Te egy intelligens könyvajánló asszisztens vagy, aki széles irodalmi tudással rendelkezik.
+    const prompt = `Te egy intelligens indie játékajánló asszisztens vagy, aki széleskörű tudással rendelkezik az indie játékok világában.
 
-Az alábbiakban megkapod az elérhető könyvek listáját JSON formátumban. A felhasználó bármit beírhat – szereplő nevét, hangulatot, korszakot, témát, jellemzőt, stílust stb.
+Az alábbiakban megkapod az elérhető indie játékok listáját JSON formátumban. A felhasználó bármit beírhat – hangulatot, műfajt, fejlesztőt, játékmechanikát, szereplőt, témát stb.
 
-A feladatod: saját irodalmi tudásodat felhasználva döntsd el, melyik könyvek illenek a leíráshoz. Ne csak a megadott adatmezőkre hagyatkozz – használd azt, amit a szerzőkről, művekről, korszakokról, szereplőkről globálisan tudsz.
+A feladatod: saját tudásodat felhasználva döntsd el, melyik játékok illenek a leíráshoz. Ne csak a megadott adatmezőkre hagyatkozz – használd azt, amit a fejlesztőkről, játékokról, műfajokról globálisan tudsz.
 
-=== ELÉRHETŐ KÖNYVEK ===
+=== ELÉRHETŐ INDIE JÁTÉKOK ===
 ${JSON.stringify(bookList, null, 2)}
 
 === FELHASZNÁLÓ KÉRÉSE ===
 "${userQuery}"
 
 === GONDOLKODÁS MÓDJA ===
-Először értsd meg, mit keres a felhasználó, majd kösd össze a könyvekkel az általános tudásod alapján:
-- Szereplő neve (pl. "Ophelia", "Akhilleusz", "Hamlet", "Odüsszeusz", "Jób") → melyik műből való? Keresd meg azt a könyvet a listában!
-- Korszak ("régi", "ókori", "antik", "középkori") → nézd meg a szerzők korát a tudásod alapján
-- Téma ("háború", "szeretet", "utazás", "bosszú", "hatalom") → melyik könyvek szólnak erről?
-- Hangulat ("szomorú", "hős", "misztikus", "romantikus", "sötét") → melyik könyvek hangulatára illik?
-- Szerző neve → direkten szűrj rá az author mezőre
+Először értsd meg, mit keres a felhasználó, majd kösd össze a játékokkal az általános tudásod alapján:
+- Szereplő neve (pl. "Zagreus", "Six", "Ori", "Six") → melyik játékból való? Keresd meg azt a játékot a listában!
+- Műfaj ("platformer", "horror", "rpg", "sandbox", "roguelite") → nézd meg a genre mezőt
+- Játékmód ("co-op", "multiplayer", "egyjátékos") → nézd meg a gameType mezőt
+- Hangulat ("szomorú", "sötét", "aranyos", "nehéz", "relaxáló") → melyik játékok hangulatára illik?
+- Fejlesztő neve → direkten szűrj rá a developer mezőre
 - Cím részlete → direkten szűrj rá a title mezőre
+- Megjelenési év / korszak → nézd meg a releaseYear mezőt
 
 FONTOS SZABÁLYOK:
-1. Ha a felhasználó egy szereplő nevét írja be, kösd össze azzal a művel, amelyből a szereplő származik!
+1. Ha a felhasználó egy szereplő nevét írja be, kösd össze azzal a játékkal, amelyből a szereplő származik!
 2. Ha viszont a kérés teljesen értelmetlen (véletlenszerű karakterek, pl. "asdfgh", "qqqqq"), adj vissza üres tömböt [].
-3. Ha van bármilyen értelmes irodalmi kapcsolat – legyen az közvetett is –, add vissza az illő könyvek ID-jait!
+3. Ha van bármilyen értelmes kapcsolat – legyen az közvetett is –, add vissza az illő játékok ID-jait!
 
 CSAK JSON tömböt adj vissza, semmi más! Példa: [1, 3, 7]`;
 
@@ -84,7 +85,7 @@ CSAK JSON tömböt adj vissza, semmi más! Példa: [1, 3, 7]`;
     const cleanJson = text.replace(/```json|```/g, "").trim();
     const recommendedIds: number[] = JSON.parse(cleanJson);
 
-    console.log('✅ Ajánlott könyv ID-k:', recommendedIds);
+    console.log('✅ Ajánlott játék ID-k:', recommendedIds);
     return recommendedIds;
   } catch (error) {
     console.error('❌ AI feldolgozás hiba:', error);

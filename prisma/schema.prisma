@@ -19,17 +19,19 @@ enum Role {
 }
 
 enum Genre {
-  VALLÁSI_IRAT
-  EPOSZ
-  REGÉNY
-  TRAGÉDIA
-  VÍGJÁTÉK
+  ACTION
+  PUZZLE
+  RPG
+  PLATFORMER
+  HORROR
+  ADVENTURE
+  SANDBOX
 }
 
 enum LiteraryForm {
-  EPIKA
-  DRÁMA
-  LIRIKA
+  SINGLE_PLAYER
+  MULTIPLAYER
+  CO_OP
 }
 
 model User {

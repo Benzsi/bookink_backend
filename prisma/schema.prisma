@@ -35,15 +35,16 @@ enum LiteraryForm {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  username     String    @unique
-  email        String    @unique
+  id           Int        @id @default(autoincrement())
+  username     String     @unique
+  email        String     @unique
   passwordHash String
-  role         Role      @default(USER)
+  role         Role       @default(USER)
   ratings      Rating[]
   comments     Comment[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  bookLists    BookList[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Book {
@@ -59,6 +60,7 @@ model Book {
   lyricNote       String?         @db.Text
   ratings         Rating[]
   comments        Comment[]
+  bookListItems   BookListItem[]
     
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -87,4 +89,25 @@ model Comment {
   book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model BookList {
+  id        Int            @id @default(autoincrement())
+  name      String
+  userId    Int
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     BookListItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model BookListItem {
+  id         Int      @id @default(autoincrement())
+  bookListId Int
+  bookId     Int
+  bookList   BookList @relation(fields: [bookListId], references: [id], onDelete: Cascade)
+  book       Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([bookListId, bookId])
 }

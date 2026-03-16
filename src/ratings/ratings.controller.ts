@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Delete,
   Body,
   Param,
@@ -18,6 +19,31 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/s
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
+  private extractUserId(req: any): number {
+    const rawHeaderUserId = req?.headers?.['x-user-id'];
+    const headerUserId = Array.isArray(rawHeaderUserId)
+      ? rawHeaderUserId[0]
+      : rawHeaderUserId;
+
+    const candidateValues = [
+      req?.user?.id,
+      req?.body?.userId,
+      req?.query?.userId,
+      req?.params?.userId,
+      headerUserId,
+    ];
+
+    for (const value of candidateValues) {
+      const parsed = Number(value);
+      if (Number.isInteger(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+
+    // Temporary dev fallback until JWT auth is enabled across endpoints.
+    return 1;
+  }
+
   // Értékelés hozzáadása/frissítése
   @Post()
   @ApiOperation({ summary: 'Értékelés hozzáadása vagy frissítése' })
@@ -29,10 +55,22 @@ export class RatingsController {
     @Request() req,
     @Body() createRatingDto: CreateRatingDto,
   ) {
-    // TODO: Add JWT Guard when ready
-    // For now, use a mock userId or get from request
-    const userId = req.body.userId || 1; // Átmeneti megoldás
+    const userId = this.extractUserId(req);
     return this.ratingsService.createOrUpdateRating(userId, createRatingDto);
+  }
+
+  @Put('book/:bookId')
+  @ApiOperation({ summary: 'Meglevo ertekeles atirasa (upsert logikaval)' })
+  @ApiParam({ name: 'bookId', description: 'Konyv azonositoja', type: Number })
+  @ApiResponse({ status: 200, description: 'Ertekeles sikeresen frissitve' })
+  @ApiResponse({ status: 400, description: 'Hibas adatok' })
+  async updateRating(
+    @Param('bookId', ParseIntPipe) bookId: number,
+    @Request() req,
+    @Body('rating', ParseIntPipe) rating: number,
+  ) {
+    const userId = this.extractUserId(req);
+    return this.ratingsService.createOrUpdateRating(userId, { bookId, rating });
   }
 
   // User saját értékelései
@@ -76,7 +114,7 @@ export class RatingsController {
   @ApiResponse({ status: 200, description: 'Értékelés sikeresen törölve' })
   @ApiResponse({ status: 404, description: 'Értékelés nem található' })
   async deleteRating(@Request() req, @Param('bookId', ParseIntPipe) bookId: number) {
-    const userId = req.body.userId || 1; // Átmeneti megoldás
+    const userId = this.extractUserId(req);
     return this.ratingsService.deleteRating(userId, bookId);
   }
 }

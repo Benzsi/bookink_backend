@@ -19,6 +19,31 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/s
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  private extractUserId(req: any): number {
+    const rawHeaderUserId = req?.headers?.['x-user-id'];
+    const headerUserId = Array.isArray(rawHeaderUserId)
+      ? rawHeaderUserId[0]
+      : rawHeaderUserId;
+
+    const candidateValues = [
+      req?.user?.id,
+      req?.body?.userId,
+      req?.query?.userId,
+      req?.params?.userId,
+      headerUserId,
+    ];
+
+    for (const value of candidateValues) {
+      const parsed = Number(value);
+      if (Number.isInteger(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+
+    // Temporary dev fallback until JWT auth is enabled across endpoints.
+    return 1;
+  }
+
   // Komment hozzáadása
   @Post()
   @ApiOperation({ summary: 'Új komment hozzáadása egy könyvhöz' })
@@ -30,9 +55,7 @@ export class CommentsController {
     @Request() req,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    // TODO: Add JWT Guard when ready
-    // For now, use a mock userId or get from request
-    const userId = req.body.userId || 1; // Átmeneti megoldás
+    const userId = this.extractUserId(req);
     return this.commentsService.createComment(userId, createCommentDto);
   }
 
@@ -49,7 +72,7 @@ export class CommentsController {
     @Request() req,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
-    const userId = req.body.userId || 1; // Átmeneti megoldás
+    const userId = this.extractUserId(req);
     return this.commentsService.updateComment(commentId, userId, updateCommentDto);
   }
 
@@ -64,7 +87,7 @@ export class CommentsController {
     @Param('id', ParseIntPipe) commentId: number,
     @Request() req,
   ) {
-    const userId = req.body.userId || 1; // Átmeneti megoldás
+    const userId = this.extractUserId(req);
     return this.commentsService.deleteComment(commentId, userId);
   }
 

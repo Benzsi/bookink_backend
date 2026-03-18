@@ -6,9 +6,9 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
   Request,
   ParseIntPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
@@ -27,6 +27,8 @@ export class RatingsController {
 
     const candidateValues = [
       req?.user?.id,
+      req?.user?.sub,
+      req?.user?.userId,
       req?.body?.userId,
       req?.query?.userId,
       req?.params?.userId,
@@ -40,8 +42,7 @@ export class RatingsController {
       }
     }
 
-    // Temporary dev fallback until JWT auth is enabled across endpoints.
-    return 1;
+    throw new BadRequestException('Hiányzó vagy érvénytelen userId');
   }
 
   // Értékelés hozzáadása/frissítése

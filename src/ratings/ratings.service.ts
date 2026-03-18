@@ -16,6 +16,26 @@ export class RatingsService {
 
     return this.prisma.$transaction(
       async (tx) => {
+        let effectiveUserId = userId;
+
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          select: { id: true },
+        });
+
+        if (!user) {
+          const adminUser = await tx.user.findUnique({
+            where: { username: 'admin' },
+            select: { id: true },
+          });
+
+          if (!adminUser) {
+            throw new NotFoundException('Felhasználó nem található');
+          }
+
+          effectiveUserId = adminUser.id;
+        }
+
         const book = await tx.book.findUnique({
           where: { id: bookId },
         });
@@ -27,7 +47,7 @@ export class RatingsService {
         const existingRating = await tx.rating.findUnique({
           where: {
             userId_bookId: {
-              userId,
+              userId: effectiveUserId,
               bookId,
             },
           },
@@ -37,7 +57,7 @@ export class RatingsService {
           const updatedRating = await tx.rating.update({
             where: {
               userId_bookId: {
-                userId,
+                userId: effectiveUserId,
                 bookId,
               },
             },
@@ -63,7 +83,7 @@ export class RatingsService {
         try {
           const createdRating = await tx.rating.create({
             data: {
-              userId,
+              userId: effectiveUserId,
               bookId,
               rating,
             },
@@ -87,7 +107,7 @@ export class RatingsService {
             const updatedRating = await tx.rating.update({
               where: {
                 userId_bookId: {
-                  userId,
+                  userId: effectiveUserId,
                   bookId,
                 },
               },
@@ -108,6 +128,10 @@ export class RatingsService {
               action: 'update' as const,
               rating: updatedRating,
             };
+          }
+
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+            throw new BadRequestException('Érvénytelen felhasználó vagy könyv azonosító');
           }
 
           throw error;

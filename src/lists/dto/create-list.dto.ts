@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateListDto {
@@ -10,11 +10,4 @@ export class CreateListDto {
   @IsNotEmpty()
   @MaxLength(100)
   name: string;
-
-  @ApiProperty({
-    description: 'Felhasználó azonosítója',
-    example: 1
-  })
-  @IsInt()
-  userId: number;
 }

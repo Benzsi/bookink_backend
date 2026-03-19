@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateListDto } from './dto/create-list.dto';
+import { UpdateListDto } from './dto/update-list.dto';
 
 @Injectable()
 export class ListsService {
+  private readonly logger = new Logger(ListsService.name);
+
   constructor(private prisma: PrismaService) {}
 
   // Felhasználó listáinak lekérése könyv adatokkal
   async getUserLists(userId: number) {
+    this.logger.log(`Fetching lists for user with id: ${userId}`);
     return this.prisma.bookList.findMany({
       where: { userId },
       include: {
@@ -37,21 +41,41 @@ export class ListsService {
   }
 
   // Új lista létrehozása
-  async createList(createListDto: CreateListDto) {
-    const { name, userId } = createListDto;
+  async createList(userId: number, createListDto: CreateListDto) {
+    this.logger.log(`Attempting to create a new list for user ${userId}...`);
+    this.logger.log(`Received data: ${JSON.stringify(createListDto)}`);
+    const { name } = createListDto;
 
-    return this.prisma.bookList.create({
-      data: {
-        name,
-        userId,
-      },
-      include: {
-        items: {
-          include: {
-            book: true,
-          },
+    try {
+      const newList = await this.prisma.bookList.create({
+        data: {
+          name,
+          userId,
         },
-      },
+      });
+      this.logger.log(`Successfully created new list with id: ${newList.id}`);
+      return newList;
+    } catch (error) {
+      this.logger.error('Failed to create new list', error.stack);
+      throw error;
+    }
+  }
+
+  // Lista nevének frissítése
+  async updateList(listId: number, updateListDto: UpdateListDto) {
+    const { name } = updateListDto;
+
+    const list = await this.prisma.bookList.findUnique({
+      where: { id: listId },
+    });
+
+    if (!list) {
+      throw new NotFoundException('Lista nem található');
+    }
+
+    return this.prisma.bookList.update({
+      where: { id: listId },
+      data: { name },
     });
   }
 

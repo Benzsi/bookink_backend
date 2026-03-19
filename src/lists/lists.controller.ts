@@ -1,19 +1,32 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Patch, UseGuards, Request } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { CreateListDto } from './dto/create-list.dto';
+import { UpdateListDto } from './dto/update-list.dto';
 
 @Controller('api/lists')
 export class ListsController {
   constructor(private readonly listsService: ListsService) {}
 
-  @Get('user/:userId')
+
+  @Get(':userId')
   getUserLists(@Param('userId', ParseIntPipe) userId: number) {
     return this.listsService.getUserLists(userId);
   }
 
-  @Post()
-  createList(@Body() createListDto: CreateListDto) {
-    return this.listsService.createList(createListDto);
+  @Post(':userId')
+  createList(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() createListDto: CreateListDto,
+  ) {
+    return this.listsService.createList(userId, createListDto);
+  }
+
+  @Patch(':listId')
+  updateList(
+    @Param('listId', ParseIntPipe) listId: number,
+    @Body() updateListDto: UpdateListDto,
+  ) {
+    return this.listsService.updateList(listId, updateListDto);
   }
 
   @Post(':listId/books')

@@ -14,6 +14,7 @@ import { AiModule } from './ai/ai.module';
 import { AiService } from './ai/ai.service';
 import { PrismaService } from './prisma.service';
 import { ListsModule } from './lists/lists.module';
+import { DevlogsModule } from './devlogs/devlogs.module';
 
 const publicPathCandidates = [
   join(__dirname, '..', 'public'),
@@ -39,6 +40,7 @@ const publicPath =
     CommentsModule,
     AiModule,
     ListsModule,
+    DevlogsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AiService, PrismaService],

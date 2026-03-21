@@ -24,6 +24,20 @@ async function main() {
     });
     console.log('✓ Admin user létrehozva!');
 
+    // 1.5. Developer user létrehozása
+    console.log('\nDeveloper user létrehozása...');
+    const devUsername = 'developer';
+    const devEmail = 'developer@bookink.hu';
+    const devPassword = 'developer';
+    const devPasswordHash = await bcrypt.hash(devPassword, 10);
+
+    await prisma.user.upsert({
+      where: { username: devUsername },
+      update: { passwordHash: devPasswordHash, role: Role.DEVELOPER, email: devEmail },
+      create: { username: devUsername, email: devEmail, passwordHash: devPasswordHash, role: Role.DEVELOPER },
+    });
+    console.log('✓ Developer user létrehozva!');
+
     // 2. Könyvek feltöltése
     console.log('\n2. Könyvek feltöltése...');
     await seedBooks();

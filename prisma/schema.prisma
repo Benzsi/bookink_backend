@@ -15,6 +15,7 @@ datasource db {
 
 enum Role {
   USER
+  DEVELOPER
   ADMIN
 }
 
@@ -43,8 +44,32 @@ model User {
   ratings      Rating[]
   comments     Comment[]
   bookLists    BookList[]
+  projects     DevProject[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+}
+
+model DevProject {
+  id          Int           @id @default(autoincrement())
+  name        String
+  category    String
+  description String        @db.Text
+  imageUrl    String?
+  developerId Int
+  developer   User          @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  entries     DevLogEntry[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model DevLogEntry {
+  id          Int        @id @default(autoincrement())
+  title       String
+  content     String     @db.Text
+  projectId   Int
+  project     DevProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Book {

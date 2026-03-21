@@ -39,7 +39,7 @@ export class AuthService {
     });
 
     const safeUser = this.sanitizeUser(user);
-    const token = this.jwtService.sign({ sub: user.id, username: user.username });
+    const token = this.jwtService.sign({ sub: user.id, username: user.username, role: user.role });
 
     return { user: safeUser, token };
   }
@@ -65,7 +65,7 @@ export class AuthService {
     }
 
     const safeUser = this.sanitizeUser(user);
-    const token = this.jwtService.sign({ sub: user.id, username: user.username });
+    const token = this.jwtService.sign({ sub: user.id, username: user.username, role: user.role });
 
     return { user: safeUser, token };
   }

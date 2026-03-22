@@ -5,6 +5,9 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
+import { SteamStrategy } from './steam.strategy';
+import { SessionSerializer } from './session.serializer';
+import { PrismaService } from '../prisma.service';
 
 @Module({
   imports: [
@@ -15,7 +18,7 @@ import { RolesGuard } from './roles.guard';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, RolesGuard],
+  providers: [AuthService, JwtAuthGuard, RolesGuard, SteamStrategy, SessionSerializer, PrismaService],
   exports: [AuthService, JwtModule, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}

@@ -6,6 +6,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { static as expressStatic } from 'express';
+import session = require('express-session');
+import passport = require('passport');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -31,6 +33,15 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'titkos_session_kulcs',
+    resave: false,
+    saveUninitialized: false,
+  }));
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.useGlobalPipes(new ValidationPipe());
 

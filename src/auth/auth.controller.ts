@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Get, UseGuards, Req, Res, Param, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Get, Delete, UseGuards, Req, Res, Param, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -40,6 +40,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Steam fiók csatolása (átirányítás)' })
   steamAuth() {
     // Ebbe a metódusba már nem jutunk el, mert a SteamAuthGuard átirányít a Steamre
+  }
+
+  @Delete('steam')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Steam fiók leválasztása' })
+  @ApiResponse({ status: 200, description: 'Sikeres leválasztás' })
+  async unlinkSteam(@Req() req: any) {
+    const userId = req.user.sub || req.user.id;
+    return this.authService.unlinkSteam(userId);
   }
 
   @Get('steam/return')

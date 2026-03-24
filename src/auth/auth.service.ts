@@ -22,6 +22,14 @@ export class AuthService {
     return rest;
   }
 
+  async unlinkSteam(userId: number): Promise<{ message: string; user: SafeUser }> {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { steamId: null },
+    });
+    return { message: 'Steam fiók leválasztva', user: this.sanitizeUser(user) };
+  }
+
   async register(dto: RegisterDto): Promise<{ user: SafeUser; token: string }> {
     const existingUser = await this.usersService.findByUsername(dto.username);
     if (existingUser) {

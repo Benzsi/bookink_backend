@@ -40,9 +40,11 @@ model User {
   username     String     @unique
   email        String     @unique
   passwordHash String
+  steamId      String?    @unique
   role         Role       @default(USER)
   ratings      Rating[]
   comments     Comment[]
+  commentVotes CommentVote[]
   bookLists    BookList[]
   projects     DevProject[]
   createdAt    DateTime   @default(now())
@@ -110,10 +112,26 @@ model Comment {
   content   String   @db.Text
   userId    Int
   bookId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  likes     Int      @default(0)
+  dislikes  Int      @default(0)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  votes     CommentVote[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model CommentVote {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  isLike    Boolean  // true = like, false = dislike
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
 }
 
 model BookList {

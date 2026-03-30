@@ -106,8 +106,12 @@ export class CommentsController {
   @ApiOperation({ summary: 'Könyv összes kommentjének lekérése' })
   @ApiParam({ name: 'bookId', description: 'Könyv azonosítója', type: Number })
   @ApiResponse({ status: 200, description: 'Kommentek sikeresen lekérve' })
-  async getBookComments(@Param('bookId', ParseIntPipe) bookId: number) {
-    return this.commentsService.getBookComments(bookId);
+  async getBookComments(
+    @Param('bookId', ParseIntPipe) bookId: number,
+    @Request() req,
+  ) {
+    const viewerId = this.extractUserId(req);
+    return this.commentsService.getBookComments(bookId, viewerId);
   }
 
   // User összes kommentje
@@ -117,5 +121,21 @@ export class CommentsController {
   @ApiResponse({ status: 200, description: 'Kommentek sikeresen lekérve' })
   async getUserComments(@Param('userId', ParseIntPipe) userId: number) {
     return this.commentsService.getUserComments(userId);
+  }
+
+  // Komment like/dislike beállítása
+  @Put(':id/vote')
+  @ApiOperation({ summary: 'Szavazás egy kommentre (like/dislike/remove)' })
+  @ApiParam({ name: 'id', description: 'Komment azonosítója', type: Number })
+  @ApiResponse({ status: 200, description: 'Komment szavazat frissítve' })
+  @ApiResponse({ status: 404, description: 'Komment nem található' })
+  @ApiBody({ schema: { type: 'object', properties: { isLike: { type: 'boolean', nullable: true } } } })
+  async voteComment(
+    @Param('id', ParseIntPipe) commentId: number,
+    @Request() req,
+    @Body() body: { isLike: boolean | null },
+  ) {
+    const userId = this.extractUserId(req);
+    return this.commentsService.voteComment(commentId, userId, body.isLike);
   }
 }

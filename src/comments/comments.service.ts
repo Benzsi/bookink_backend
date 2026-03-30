@@ -93,8 +93,8 @@ export class CommentsService {
     });
   }
 
-  async getBookComments(bookId: number) {
-    return this.prisma.comment.findMany({
+  async getBookComments(bookId: number, viewerId?: number) {
+    const comments = await this.prisma.comment.findMany({
       where: { bookId },
       include: {
         user: {
@@ -103,10 +103,28 @@ export class CommentsService {
             username: true,
           },
         },
+        votes: viewerId ? {
+          where: { userId: viewerId },
+          select: { isLike: true }
+        } : false,
       },
       orderBy: {
         createdAt: 'desc',
       },
+    });
+
+    // Map each comment to include a simple userVote field: 1 for like, -1 for dislike, 0 for none
+    return comments.map(comment => {
+      let userVote = 0;
+      if (viewerId && (comment as any).votes && (comment as any).votes.length > 0) {
+        userVote = (comment as any).votes[0].isLike ? 1 : -1;
+      }
+      
+      const { votes, ...rest } = comment as any;
+      return {
+        ...rest,
+        userVote
+      };
     });
   }
 
@@ -154,5 +172,69 @@ export class CommentsService {
     }
 
     return comment;
+  }
+
+  async voteComment(commentId: number, userId: number, isLike: boolean | null) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      throw new NotFoundException('Komment nem található');
+    }
+
+    const existingVote = await this.prisma.commentVote.findUnique({
+      where: { userId_commentId: { userId, commentId } }
+    });
+
+    // Ha isLike === null, VAGY ugyanazt küldi ami már el volt mentve, akkor töröljük a szavazatát
+    if (isLike === null || (existingVote && existingVote.isLike === isLike)) {
+      await this.prisma.commentVote.deleteMany({
+        where: { commentId, userId },
+      });
+    } else {
+      // Különben létrehozzuk vagy frissítjük a szavazatot
+      await this.prisma.commentVote.upsert({
+        where: { userId_commentId: { userId, commentId } },
+        update: { isLike },
+        create: { userId, commentId, isLike },
+      });
+    }
+
+    const likes = await this.prisma.commentVote.count({
+      where: { commentId, isLike: true },
+    });
+    const dislikes = await this.prisma.commentVote.count({
+      where: { commentId, isLike: false },
+    });
+
+    const updatedComment = await this.prisma.comment.update({
+      where: { id: commentId },
+      data: { likes, dislikes },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        book: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+
+    // Determine the current user's vote state
+    const vote = await this.prisma.commentVote.findUnique({
+      where: { userId_commentId: { userId, commentId } }
+    });
+    
+    return {
+      ...updatedComment,
+      userVote: vote ? (vote.isLike ? 1 : -1) : 0
+    };
   }
 }

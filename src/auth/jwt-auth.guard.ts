@@ -14,12 +14,18 @@ export class JwtAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.headers['authorization'];
+    let token = '';
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Hiányzó vagy érvénytelen token');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (request.query && request.query.token) {
+      // Támogatás a ?token=... paraméternek (pl. Steam redirect-hez)
+      token = request.query.token as string;
     }
 
-    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('Hiányzó vagy érvénytelen token');
+    }
 
     try {
       const payload = this.jwtService.verify(token);

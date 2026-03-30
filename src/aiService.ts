@@ -18,7 +18,7 @@ const MODELS = [
 const generateWithFallback = async (prompt: string): Promise<string> => {
   for (const modelName of MODELS) {
     try {
-      console.log(`🤖 Próbálkozás: ${modelName}`);
+      console.log(`🤖AI Próbálkozás: ${modelName}`);
       const model = genAI.getGenerativeModel({ model: modelName });
       const result = await model.generateContent(prompt);
       console.log(`✅ Sikeres model: ${modelName}`);

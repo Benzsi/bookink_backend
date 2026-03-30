@@ -125,8 +125,27 @@ export class AuthService {
     const schemaUrl = `https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key=${apiKey}&appid=${appId}&l=hu`;
 
     try {
+        const fetchWithRetry = async (url: string, retries = 3): Promise<any> => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) {
+                        // Ha pl. 403 Forbidden vagy egyéb hiba van
+                        if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+                            throw new Error(`Kliens hiba: ${res.status}`);
+                        }
+                        throw new Error(`HTTP hiba: ${res.status}`);
+                    }
+                    return res;
+                } catch (err: any) {
+                    if (i === retries - 1) throw err;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+        };
+
         const [statsRes, schemaRes] = await Promise.all([
-          fetch(statsUrl), fetch(schemaUrl)
+          fetchWithRetry(statsUrl, 3), fetchWithRetry(schemaUrl, 3)
         ]);
         
         const statsData = await statsRes.json();
@@ -170,11 +189,17 @@ export class AuthService {
         fs.writeFileSync(cacheFile, JSON.stringify(finalResult, null, 2), 'utf8');
         return finalResult;
 
-    } catch (e) {
-      console.error(`[SteamSync] Hiba a(z) ${appId} játék achievementjeinek lekérésekor:`, e);
+    } catch (e: any) {
+      console.error(`[SteamSync] Hiba a(z) ${appId} játék achievementjeinek lekérésekor: ${e.message}`);
       // Ha lekéréshiba volt, de van egy "régi" 24 óránál is régebbi cache-ünk, essünk vissza arra!
       if (fs.existsSync(cacheFile)) {
         console.log(`[SteamSync] Régi cache visszaadása fallback-ként a(z) ${appId}-hez.`);
+        // "Érintjük" a fájlt (frissítjük a módosítási dátumát), hogy ne próbálkozzon újra azonnal
+        try {
+            const now = new Date();
+            fs.utimesSync(cacheFile, now, now);
+        } catch (utErr) {}
+        
         return JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
       }
       throw new ConflictException("Nem sikerült lekérni a Steam-ről a játékhoz tartozó achievementeket. (Privát profil vagy hálózati hiba)");

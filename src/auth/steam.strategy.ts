@@ -50,6 +50,14 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
 
     const steamId64 = profile.id;
 
+    const existingLink = await this.prisma.user.findUnique({
+      where: { steamId: steamId64 }
+    });
+
+    if (existingLink && existingLink.id !== userId) {
+      throw new UnauthorizedException("Ez a Steam fiók már hozzá van kötve egy másik felhasználóhoz!");
+    }
+
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: { steamId: steamId64 }

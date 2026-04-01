@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,13 +7,178 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  DEVELOPER
-  ADMIN
+model book {
+  id             Int               @id @default(autoincrement())
+  sequenceNumber Int               @unique(map: "Book_sequenceNumber_key")
+  title          String
+  author         String
+  coverUrl       String?
+  commentId      Int?              @unique(map: "Book_commentId_key")
+  rating         Int?
+  genre          book_genre
+  literaryForm   book_literaryForm
+  lyricNote      String?           @db.Text
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime
+  pageCount      Int
+  booklistitem   booklistitem[]
+  comment        comment[]
+  ratings        rating[]
 }
 
-enum Genre {
+model booklist {
+  id           Int            @id @default(autoincrement())
+  name         String
+  userId       Int
+  imagePath    String?        @db.Text
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  user         user           @relation(fields: [userId], references: [id], onDelete: Cascade, map: "BookList_userId_fkey")
+  booklistitem booklistitem[]
+
+  @@index([userId], map: "BookList_userId_fkey")
+}
+
+model booklistitem {
+  id                  Int                   @id @default(autoincrement())
+  bookListId          Int
+  bookId              Int
+  createdAt           DateTime              @default(now())
+  book                book                  @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "BookListItem_bookId_fkey")
+  booklist            booklist              @relation(fields: [bookListId], references: [id], onDelete: Cascade, map: "BookListItem_bookListId_fkey")
+  booklistitemgallery booklistitemgallery[]
+
+  @@unique([bookListId, bookId], map: "BookListItem_bookListId_bookId_key")
+  @@index([bookId], map: "BookListItem_bookId_fkey")
+}
+
+model booklistitemgallery {
+  id             Int          @id @default(autoincrement())
+  bookListItemId Int
+  filePath       String       @db.Text
+  fileType       String
+  createdAt      DateTime     @default(now())
+  booklistitem   booklistitem @relation(fields: [bookListItemId], references: [id], onDelete: Cascade, map: "BookListItemGallery_bookListItemId_fkey")
+
+  @@index([bookListItemId], map: "BookListItemGallery_bookListItemId_fkey")
+}
+
+model comment {
+  id          Int           @id @default(autoincrement())
+  content     String        @db.Text
+  userId      Int
+  bookId      Int
+  likes       Int           @default(0)
+  dislikes    Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime
+  book        book          @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "Comment_bookId_fkey")
+  user        user          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Comment_userId_fkey")
+  commentvote commentvote[]
+
+  @@index([bookId], map: "Comment_bookId_fkey")
+  @@index([userId], map: "Comment_userId_fkey")
+}
+
+model commentvote {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  isLike    Boolean
+  createdAt DateTime @default(now())
+  comment   comment  @relation(fields: [commentId], references: [id], onDelete: Cascade, map: "CommentVote_commentId_fkey")
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "CommentVote_userId_fkey")
+
+  @@unique([userId, commentId], map: "CommentVote_userId_commentId_key")
+  @@index([commentId], map: "CommentVote_commentId_fkey")
+}
+
+model devlogentry {
+  id         Int        @id @default(autoincrement())
+  title      String
+  content    String     @db.Text
+  projectId  Int
+  imagePath  String?    @db.Text
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime
+  devproject devproject @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "DevLogEntry_projectId_fkey")
+
+  @@index([projectId], map: "DevLogEntry_projectId_fkey")
+}
+
+model devproject {
+  id           Int                     @id @default(autoincrement())
+  name         String
+  genre        devproject_genre
+  literaryForm devproject_literaryForm
+  description  String                  @db.Text
+  imagePath    String?                 @db.Text
+  developerId  Int
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime
+  devlogentry  devlogentry[]
+  favorites    devprojectfavorite[]
+  upvotes      devprojectupvote[]
+  user         user                    @relation(fields: [developerId], references: [id], onDelete: Cascade, map: "DevProject_developerId_fkey")
+
+  @@index([developerId], map: "DevProject_developerId_fkey")
+}
+
+model rating {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  userId    Int
+  bookId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  book      book     @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "Rating_bookId_fkey")
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Rating_userId_fkey")
+
+  @@unique([userId, bookId], map: "Rating_userId_bookId_key")
+  @@index([bookId], map: "Rating_bookId_fkey")
+}
+
+model user {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique(map: "User_username_key")
+  email        String        @unique(map: "User_email_key")
+  passwordHash String
+  steamId      String?       @unique(map: "User_steamId_key")
+  role         user_role     @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime
+  booklist     booklist[]
+  comment      comment[]
+  commentvote  commentvote[]
+  devproject   devproject[]
+  rating       rating[]
+  devfavorites devprojectfavorite[]
+  devupvotes   devprojectupvote[]
+}
+
+model devprojectfavorite {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  projectId Int
+  createdAt DateTime   @default(now())
+  project   devproject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      user       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model devprojectupvote {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  projectId Int
+  createdAt DateTime   @default(now())
+  project   devproject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      user       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+enum devproject_genre {
   ACTION
   PUZZLE
   RPG
@@ -27,130 +186,82 @@ enum Genre {
   HORROR
   ADVENTURE
   SANDBOX
+  SIMULATION
+  STRATEGY
+  SPORTS
+  RACING
+  FIGHTING
+  SHOOTER
+  SURVIVAL
+  STEALTH
+  ROGUELIKE
+  MOBA
+  MMORPG
+  TOWER_DEFENSE
+  PARTY
+  CARD_GAME
+  RHYTHM
 }
 
-enum LiteraryForm {
+enum devproject_literaryForm {
   SINGLE_PLAYER
   MULTIPLAYER
   CO_OP
+  BATTLE_ROYALE
+  OPEN_WORLD
+  LINEAR
+  METROIDVANIA
+  SOULSLIKE
+  FIRST_PERSON
+  THIRD_PERSON
+  VR
+  AUTOSHOOTER
+  TEXT_BASED
 }
 
-model User {
-  id           Int        @id @default(autoincrement())
-  username     String     @unique
-  email        String     @unique
-  passwordHash String
-  steamId      String?    @unique
-  role         Role       @default(USER)
-  ratings      Rating[]
-  comments     Comment[]
-  commentVotes CommentVote[]
-  bookLists    BookList[]
-  projects     DevProject[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+enum user_role {
+  USER
+  DEVELOPER
+  ADMIN
 }
 
-model DevProject {
-  id          Int           @id @default(autoincrement())
-  name        String
-  category    String
-  description String        @db.Text
-  imageUrl    String?
-  developerId Int
-  developer   User          @relation(fields: [developerId], references: [id], onDelete: Cascade)
-  entries     DevLogEntry[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+enum book_genre {
+  ACTION
+  PUZZLE
+  RPG
+  PLATFORMER
+  HORROR
+  ADVENTURE
+  SANDBOX
+  SIMULATION
+  STRATEGY
+  SPORTS
+  RACING
+  FIGHTING
+  SHOOTER
+  SURVIVAL
+  STEALTH
+  ROGUELIKE
+  MOBA
+  MMORPG
+  TOWER_DEFENSE
+  PARTY
+  CARD_GAME
+  RHYTHM
 }
 
-model DevLogEntry {
-  id          Int        @id @default(autoincrement())
-  title       String
-  content     String     @db.Text
-  projectId   Int
-  project     DevProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-}
-
-model Book {
-  id              Int             @id @default(autoincrement())
-  sequenceNumber  Int             @unique
-  title           String
-  author          String
-  coverUrl        String?
-  commentId       Int?            @unique
-  rating          Int?
-  genre           Genre
-  literaryForm    LiteraryForm
-  lyricNote       String?         @db.Text
-  ratings         Rating[]
-  comments        Comment[]
-  bookListItems   BookListItem[]
-    
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  pageCount       Int
-}
-
-model Rating {
-  id        Int      @id @default(autoincrement())
-  rating    Int      // 1-5 csillag
-  userId    Int
-  bookId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, bookId]) // Egy user csak egyszer értékelhet egy könyvet
-}
-
-model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String   @db.Text
-  userId    Int
-  bookId    Int
-  likes     Int      @default(0)
-  dislikes  Int      @default(0)
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book      Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  votes     CommentVote[]
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
-model CommentVote {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  commentId Int
-  isLike    Boolean  // true = like, false = dislike
-  createdAt DateTime @default(now())
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, commentId])
-}
-
-model BookList {
-  id        Int            @id @default(autoincrement())
-  name      String
-  userId    Int
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items     BookListItem[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-}
-
-model BookListItem {
-  id         Int      @id @default(autoincrement())
-  bookListId Int
-  bookId     Int
-  bookList   BookList @relation(fields: [bookListId], references: [id], onDelete: Cascade)
-  book       Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-
-  @@unique([bookListId, bookId])
+enum book_literaryForm {
+  SINGLE_PLAYER
+  MULTIPLAYER
+  CO_OP
+  BATTLE_ROYALE
+  OPEN_WORLD
+  LINEAR
+  METROIDVANIA
+  SOULSLIKE
+  FIRST_PERSON
+  THIRD_PERSON
+  VR
+  AUTOSHOOTER
+  TEXT_BASED
 }

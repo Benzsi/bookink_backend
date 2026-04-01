@@ -29,6 +29,9 @@ export class AiService {
       const recommendedIds = await recommendBooksWithAI(query, booksWithRatings);
       return booksWithRatings.filter(b => recommendedIds.includes(b.id));
     } catch (error: any) {
+      if (error?.__aiNoKey) {
+        throw error;
+      }
       console.warn('⚠️ AI nem elérhető, szöveges játék-keresés indul...');
       // Gyors szöveges keresés cím/fejlesztő alapján (AI nélkül is működik)
       const textResults = this.textFallbackSearch(query, booksWithRatings);

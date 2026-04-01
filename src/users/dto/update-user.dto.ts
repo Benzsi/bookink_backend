@@ -1,5 +1,5 @@
 import { IsString, IsOptional, MinLength, IsEmail } from 'class-validator';
-import { Role } from '@prisma/client';
+import { user_role } from '@prisma/client';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateUserDto {
@@ -23,10 +23,10 @@ export class UpdateUserDto {
 
   @ApiPropertyOptional({
     description: 'Felhasználói szerepkör',
-    enum: Role,
-    example: Role.ADMIN
+    enum: user_role,
+    example: user_role.ADMIN
   })
   @IsOptional()
-  role?: Role;
+  role?: user_role;
 }
 

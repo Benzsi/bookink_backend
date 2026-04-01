@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma.service';
-import { Role, User } from '@prisma/client';
+import { user_role as Role, user as User } from '@prisma/client';
 
 interface CreateUserInput {
   username: string;
@@ -51,6 +51,7 @@ export class UsersService {
         email,
         passwordHash,
         role,
+        updatedAt: new Date(),
       },
     });
   }
@@ -66,6 +67,7 @@ export class UsersService {
         email,
         passwordHash,
         role,
+        updatedAt: new Date(),
       },
     });
   }
@@ -77,6 +79,7 @@ export class UsersService {
         ...(input.username && { username: input.username }),
         ...(input.email && { email: input.email }),
         ...(input.role && { role: input.role }),
+        updatedAt: new Date(),
       },
     });
   }

@@ -24,6 +24,7 @@ export class CommentsService {
         userId,
         bookId,
         content,
+        updatedAt: new Date(),
       },
       include: {
         user: {
@@ -57,7 +58,7 @@ export class CommentsService {
 
     return this.prisma.comment.update({
       where: { id: commentId },
-      data: updateCommentDto,
+      data: { ...updateCommentDto, updatedAt: new Date() },
       include: {
         user: {
           select: {
@@ -103,7 +104,7 @@ export class CommentsService {
             username: true,
           },
         },
-        votes: viewerId ? {
+        commentvote: viewerId ? {
           where: { userId: viewerId },
           select: { isLike: true }
         } : false,
@@ -116,11 +117,11 @@ export class CommentsService {
     // Map each comment to include a simple userVote field: 1 for like, -1 for dislike, 0 for none
     return comments.map(comment => {
       let userVote = 0;
-      if (viewerId && (comment as any).votes && (comment as any).votes.length > 0) {
-        userVote = (comment as any).votes[0].isLike ? 1 : -1;
+      if (viewerId && (comment as any).commentvote && (comment as any).commentvote.length > 0) {
+        userVote = (comment as any).commentvote[0].isLike ? 1 : -1;
       }
       
-      const { votes, ...rest } = comment as any;
+      const { commentvote, ...rest } = comment as any;
       return {
         ...rest,
         userVote
@@ -183,34 +184,34 @@ export class CommentsService {
       throw new NotFoundException('Komment nem található');
     }
 
-    const existingVote = await this.prisma.commentVote.findUnique({
+    const existingVote = await this.prisma.commentvote.findUnique({
       where: { userId_commentId: { userId, commentId } }
     });
 
     // Ha isLike === null, VAGY ugyanazt küldi ami már el volt mentve, akkor töröljük a szavazatát
     if (isLike === null || (existingVote && existingVote.isLike === isLike)) {
-      await this.prisma.commentVote.deleteMany({
+      await this.prisma.commentvote.deleteMany({
         where: { commentId, userId },
       });
     } else {
       // Különben létrehozzuk vagy frissítjük a szavazatot
-      await this.prisma.commentVote.upsert({
+      await this.prisma.commentvote.upsert({
         where: { userId_commentId: { userId, commentId } },
         update: { isLike },
         create: { userId, commentId, isLike },
       });
     }
 
-    const likes = await this.prisma.commentVote.count({
+    const likes = await this.prisma.commentvote.count({
       where: { commentId, isLike: true },
     });
-    const dislikes = await this.prisma.commentVote.count({
+    const dislikes = await this.prisma.commentvote.count({
       where: { commentId, isLike: false },
     });
 
     const updatedComment = await this.prisma.comment.update({
       where: { id: commentId },
-      data: { likes, dislikes },
+      data: { likes, dislikes, updatedAt: new Date() },
       include: {
         user: {
           select: {
@@ -228,7 +229,7 @@ export class CommentsService {
     });
 
     // Determine the current user's vote state
-    const vote = await this.prisma.commentVote.findUnique({
+    const vote = await this.prisma.commentvote.findUnique({
       where: { userId_commentId: { userId, commentId } }
     });
     

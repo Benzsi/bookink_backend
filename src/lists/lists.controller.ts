@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Patch, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Patch, UseGuards, Request, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from '../common/upload.config';
 
 @Controller('api/lists')
 export class ListsController {
@@ -48,5 +51,41 @@ export class ListsController {
   @Delete(':listId')
   deleteList(@Param('listId', ParseIntPipe) listId: number) {
     return this.listsService.deleteList(listId);
+  }
+
+  @Post(':listId/upload')
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async uploadListImage(
+    @Param('listId') listId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Fájl feltöltése kötelező');
+    }
+    return this.listsService.updateListImagePath(Number(listId), file.filename);
+  }
+
+  @Post(':listId/books/:bookId/gallery')
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async uploadBookItemGallery(
+    @Param('listId') listId: string,
+    @Param('bookId') bookId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Fájl feltöltése kötelező');
+    }
+    const fileType = file.mimetype.startsWith('video/') ? 'VIDEO' : 'IMAGE';
+    return this.listsService.addGalleryItem(
+      Number(listId),
+      Number(bookId),
+      file.filename,
+      fileType,
+    );
+  }
+
+  @Delete('gallery/:id')
+  async deleteGalleryItem(@Param('id') id: string) {
+    return this.listsService.deleteGalleryItem(Number(id));
   }
 }

@@ -18,6 +18,7 @@ export async function seedRatings() {
           username: `user${users.length + i + 1}`,
           email: `user${users.length + i + 1}@bookink.hu`,
           passwordHash: 'dummy',
+          updatedAt: new Date(),
         },
       });
       users.push(user);
@@ -37,6 +38,7 @@ export async function seedRatings() {
           rating,
           userId: user.id,
           bookId: book.id,
+          updatedAt: new Date(),
         },
       });
     }

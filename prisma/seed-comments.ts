@@ -84,6 +84,7 @@ export async function seedComments() {
         userId: adminUser.id,
         bookId,
         content: comment.content,
+        updatedAt: new Date(),
       },
     });
   }

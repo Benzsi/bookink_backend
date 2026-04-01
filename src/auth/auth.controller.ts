@@ -35,6 +35,16 @@ export class AuthController {
     return { message: 'Sikeres bejelentkezés', user: result.user, token: result.token };
   }
 
+  @Get('steam/check-key')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Ellenőrzi, hogy be van-e állítva a Steam API kulcs' })
+  checkSteamKey() {
+    if (!process.env.STEAM_API_KEY || process.env.STEAM_API_KEY === 'A_TE_STEAM_API_KULCSOD') {
+      return { hasKey: false };
+    }
+    return { hasKey: true };
+  }
+
   @Get('steam')
   @UseGuards(JwtAuthGuard, SteamAuthGuard)
   @ApiOperation({ summary: 'Steam fiók csatolása (átirányítás)' })

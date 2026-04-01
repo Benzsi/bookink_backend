@@ -60,7 +60,7 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
 
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
-      data: { steamId: steamId64 }
+      data: { steamId: steamId64, updatedAt: new Date() }
     });
 
     // ---------------------------------------------------------------------------------
@@ -77,15 +77,16 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
                 const steamGameNames = gamesData.response.games.map((g: any) => g.name);
 
                 // 1. Kikeressük vagy létrehozzuk a felhasználó "Játékaim" listáját
-                let myGamesList = await this.prisma.bookList.findFirst({
+                let myGamesList = await this.prisma.booklist.findFirst({
                     where: { userId: userId, name: 'Játékaim' }
                 });
 
                 if (!myGamesList) {
-                    myGamesList = await this.prisma.bookList.create({
+                    myGamesList = await this.prisma.booklist.create({
                         data: {
                             name: 'Játékaim',
-                            userId: userId
+                            userId: userId,
+                            updatedAt: new Date()
                         }
                     });
                 }
@@ -102,7 +103,7 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
                 // 3. Hozzáadjuk a listához, ha még nincsenek benne
                 let addedCount = 0;
                 for (const dbGame of matchingGamesInDb) {
-                    const existingItem = await this.prisma.bookListItem.findUnique({
+                    const existingItem = await this.prisma.booklistitem.findUnique({
                         where: {
                             bookListId_bookId: {
                                 bookListId: myGamesList.id,
@@ -112,7 +113,7 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
                     });
 
                     if (!existingItem) {
-                        await this.prisma.bookListItem.create({
+                        await this.prisma.booklistitem.create({
                             data: {
                                 bookListId: myGamesList.id,
                                 bookId: dbGame.id

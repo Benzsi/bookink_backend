@@ -5,7 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma.service';
-import { User } from '@prisma/client';
+import { user as User } from '@prisma/client';
 
 type SafeUser = Omit<User, 'passwordHash'>;
 
@@ -25,7 +25,7 @@ export class AuthService {
   async unlinkSteam(userId: number): Promise<{ message: string; user: SafeUser }> {
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: { steamId: null },
+      data: { steamId: null, updatedAt: new Date() },
     });
     return { message: 'Steam fiók leválasztva', user: this.sanitizeUser(user) };
   }

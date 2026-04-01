@@ -1,15 +1,16 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, user_role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { seedBooks } from './seed-books';
 import { seedRatings } from './seed-ratings';
 import { seedComments } from './seed-comments';
+import { seedCommentVotes } from './seed-comment-votes';
 
 async function main() {
   const prisma = new PrismaClient();
-  
+
   try {
     console.log('Seeding megkezdődött...');
-    
+
     // 1. Admin user létrehozása
     console.log('\n1. Admin user létrehozása...');
     const username = 'admin';
@@ -19,8 +20,8 @@ async function main() {
 
     await prisma.user.upsert({
       where: { username },
-      update: { passwordHash, role: Role.ADMIN, email },
-      create: { username, email, passwordHash, role: Role.ADMIN },
+      update: { passwordHash, role: user_role.ADMIN, email, updatedAt: new Date() },
+      create: { username, email, passwordHash, role: user_role.ADMIN, updatedAt: new Date() },
     });
     console.log('✓ Admin user létrehozva!');
 
@@ -33,8 +34,8 @@ async function main() {
 
     await prisma.user.upsert({
       where: { username: devUsername },
-      update: { passwordHash: devPasswordHash, role: Role.DEVELOPER, email: devEmail },
-      create: { username: devUsername, email: devEmail, passwordHash: devPasswordHash, role: Role.DEVELOPER },
+      update: { passwordHash: devPasswordHash, role: user_role.DEVELOPER, email: devEmail, updatedAt: new Date() },
+      create: { username: devUsername, email: devEmail, passwordHash: devPasswordHash, role: user_role.DEVELOPER, updatedAt: new Date() },
     });
     console.log('✓ Developer user létrehozva!');
 
@@ -48,6 +49,9 @@ async function main() {
 
     // 4. Kommentek generálása
     await seedComments();
+
+    // 5. Komment értékelések generálása
+    await seedCommentVotes();
 
     console.log('\nSeeding sikeresen befejezve!');
   } catch (error) {

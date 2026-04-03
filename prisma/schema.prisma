@@ -118,7 +118,7 @@ model devproject {
   updatedAt    DateTime
   devlogentry  devlogentry[]
   favorites    devprojectfavorite[]
-  upvotes      devprojectupvote[]
+  upvotes      devprojectwishlist[]
   user         user                    @relation(fields: [developerId], references: [id], onDelete: Cascade, map: "DevProject_developerId_fkey")
 
   @@index([developerId], map: "DevProject_developerId_fkey")
@@ -153,7 +153,7 @@ model user {
   devproject   devproject[]
   rating       rating[]
   devfavorites devprojectfavorite[]
-  devupvotes   devprojectupvote[]
+  devupvotes   devprojectwishlist[]
 }
 
 model devprojectfavorite {
@@ -167,7 +167,7 @@ model devprojectfavorite {
   @@unique([userId, projectId])
 }
 
-model devprojectupvote {
+model devprojectwishlist {
   id        Int        @id @default(autoincrement())
   userId    Int
   projectId Int

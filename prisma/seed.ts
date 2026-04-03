@@ -4,6 +4,8 @@ import { seedBooks } from './seed-books';
 import { seedRatings } from './seed-ratings';
 import { seedComments } from './seed-comments';
 import { seedCommentVotes } from './seed-comment-votes';
+import { seedDevLogs } from './seed-devlogs';
+import { seedDevUpvotes } from './seed-dev-upvotes';
 
 async function main() {
   const prisma = new PrismaClient();
@@ -50,8 +52,12 @@ async function main() {
     // 4. Kommentek generálása
     await seedComments();
 
-    // 5. Komment értékelések generálása
-    await seedCommentVotes();
+    // 6. Dev Logok generálása
+    console.log('\n6. Dev Logok generálása...');
+    await seedDevLogs();
+
+    // 7. Véletlenszerű felpontozások
+    await seedDevUpvotes();
 
     console.log('\nSeeding sikeresen befejezve!');
   } catch (error) {

@@ -88,4 +88,12 @@ export class ListsController {
   async deleteGalleryItem(@Param('id') id: string) {
     return this.listsService.deleteGalleryItem(Number(id));
   }
+  @Post(':userId/toggle-special')
+  async toggleSpecialList(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body('bookId', ParseIntPipe) bookId: number,
+    @Body('listName') listName: string,
+  ) {
+    return this.listsService.toggleSpecialList(userId, bookId, listName);
+  }
 }

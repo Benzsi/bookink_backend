@@ -258,4 +258,47 @@ export class ListsService {
 
     return { success: true };
   }
+  async toggleSpecialList(userId: number, bookId: number, listName: string) {
+    // 1. Find or create the list
+    let list = await this.prisma.booklist.findFirst({
+      where: { userId, name: listName },
+    });
+
+    if (!list) {
+      list = await this.prisma.booklist.create({
+        data: {
+          name: listName,
+          userId,
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    // 2. Check if the book is already in the list
+    const existing = await this.prisma.booklistitem.findUnique({
+      where: {
+        bookListId_bookId: {
+          bookListId: list.id,
+          bookId,
+        },
+      },
+    });
+
+    if (existing) {
+      // Remove it
+      await this.prisma.booklistitem.delete({
+        where: { id: existing.id },
+      });
+      return { added: false, listId: list.id };
+    } else {
+      // Add it
+      await this.prisma.booklistitem.create({
+        data: {
+          bookListId: list.id,
+          bookId,
+        },
+      });
+      return { added: true, listId: list.id };
+    }
+  }
 }

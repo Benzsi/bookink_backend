@@ -48,6 +48,9 @@ export class DevlogsService {
         devlogentry: {
           orderBy: { createdAt: 'desc' },
         },
+        _count: {
+          select: { devlogentry: true, favorites: true, upvotes: true },
+        },
       },
     });
 
@@ -122,21 +125,62 @@ export class DevlogsService {
     }
   }
 
-  async toggleUpvote(userId: number, projectId: number) {
-    const upvote = await this.prisma.devprojectupvote.findUnique({
+  async toggleWishlist(userId: number, projectId: number) {
+    const wishlist = await this.prisma.devprojectwishlist.findUnique({
       where: { userId_projectId: { userId, projectId } },
     });
 
-    if (upvote) {
-      await this.prisma.devprojectupvote.delete({
-        where: { id: upvote.id },
+    if (wishlist) {
+      await this.prisma.devprojectwishlist.delete({
+        where: { id: wishlist.id },
       });
-      return { upvoted: false };
+      return { wishlisted: false };
     } else {
-      await this.prisma.devprojectupvote.create({
+      await this.prisma.devprojectwishlist.create({
         data: { userId, projectId },
       });
-      return { upvoted: true };
+      return { wishlisted: true };
     }
+  }
+
+  async getUserProjectLists(userId: number) {
+    const favorites = await this.prisma.devprojectfavorite.findMany({
+      where: { userId },
+      include: {
+        project: {
+          include: {
+            user: { select: { username: true } },
+            _count: { select: { devlogentry: true, upvotes: true } }
+          }
+        }
+      }
+    });
+
+    const wishlist = await this.prisma.devprojectwishlist.findMany({
+      where: { userId },
+      include: {
+        project: {
+          include: {
+            user: { select: { username: true } },
+            _count: { select: { devlogentry: true, upvotes: true } }
+          }
+        }
+      }
+    });
+
+    return [
+      {
+        id: -1, // Virtual ID
+        name: 'Kedvelt Dev Logok',
+        items: favorites.map(f => ({ ...f.project, developer: f.project.user })),
+        isProjectList: true
+      },
+      {
+        id: -2, // Virtual ID
+        name: 'Wishlist Dev Logok',
+        items: wishlist.map(w => ({ ...w.project, developer: w.project.user })),
+        isProjectList: true
+      }
+    ];
   }
 }

@@ -100,9 +100,14 @@ export class DevlogsController {
     return this.devlogsService.toggleFavorite(req.user.sub, id);
   }
 
-  @Post(':id/upvote')
+  @Post(':id/wishlist')
   @UseGuards(JwtAuthGuard)
-  async toggleUpvote(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
-    return this.devlogsService.toggleUpvote(req.user.sub, id);
+  async toggleWishlist(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.devlogsService.toggleWishlist(req.user.sub, id);
+  }
+
+  @Get('user/:userId/lists')
+  async getUserProjectLists(@Param('userId', ParseIntPipe) userId: number) {
+    return this.devlogsService.getUserProjectLists(userId);
   }
 }

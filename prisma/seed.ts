@@ -39,7 +39,19 @@ async function main() {
       update: { passwordHash: devPasswordHash, role: user_role.DEVELOPER, email: devEmail, updatedAt: new Date() },
       create: { username: devUsername, email: devEmail, passwordHash: devPasswordHash, role: user_role.DEVELOPER, updatedAt: new Date() },
     });
-    console.log('✓ Developer user létrehozva!');
+
+    console.log('\nMate user létrehozása...');
+    const devUsernameMate = 'mate';
+    const devEmailMate = 'galganmate@bookink.hu';
+    const devPasswordMate = 'mate';
+    const devPasswordHashMate = await bcrypt.hash(devPasswordMate, 10);
+
+    await prisma.user.upsert({
+      where: { username: devUsernameMate },
+      update: { passwordHash: devPasswordHashMate, role: user_role.DEVELOPER, email: devEmailMate, updatedAt: new Date() },
+      create: { username: devUsernameMate, email: devEmailMate, passwordHash: devPasswordHashMate, role: user_role.DEVELOPER, updatedAt: new Date() },
+    });
+    console.log('✓ Mate user létrehozva!');
 
     // 2. Könyvek feltöltése
     console.log('\n2. Könyvek feltöltése...');

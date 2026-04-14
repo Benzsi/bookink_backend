@@ -38,6 +38,9 @@ const generateWithFallback = async (prompt: string): Promise<string> => {
 
 export const recommendBooksWithAI = async (userQuery: string, books: any[]): Promise<number[]> => {
   try {
+    if (!apiKey) {
+      throw { __aiNoKey: true, message: "AI_API_KEY nincs beállítva!" };
+    }
     console.log('🤖 AI játékajánlás megkezdődött:', userQuery);
 
     const bookList = books.map(b => ({

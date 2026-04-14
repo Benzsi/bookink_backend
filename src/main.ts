@@ -25,6 +25,7 @@ async function bootstrap() {
 
   app.useStaticAssets(publicPath);
   app.use('/covers', expressStatic(join(publicPath, 'covers')));
+  app.use('/dev_covers', expressStatic(join(publicPath, 'dev_covers')));
   app.use(expressStatic(publicPath));
 
   app.enableCors({

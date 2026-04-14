@@ -13,7 +13,7 @@ async function main() {
   }
 
   console.log(`Létező szavazatok törlése...`);
-  await prisma.commentVote.deleteMany({});
+  await prisma.commentvote.deleteMany({});
 
   console.log(`Random szavazatok generálása ${comments.length} kommentre...`);
 
@@ -23,7 +23,7 @@ async function main() {
     const shuffledUsers = [...users].sort(() => 0.5 - Math.random()).slice(0, voteCount);
 
     for (const user of shuffledUsers) {
-      await prisma.commentVote.create({
+      await prisma.commentvote.create({
         data: {
           userId: user.id,
           commentId: comment.id,
@@ -33,12 +33,12 @@ async function main() {
     }
 
     // Újraszámoljuk a komment értékeit
-    const likes = await prisma.commentVote.count({ where: { commentId: comment.id, isLike: true } });
-    const dislikes = await prisma.commentVote.count({ where: { commentId: comment.id, isLike: false } });
+    const likes = await prisma.commentvote.count({ where: { commentId: comment.id, isLike: true } });
+    const dislikes = await prisma.commentvote.count({ where: { commentId: comment.id, isLike: false } });
 
     await prisma.comment.update({
       where: { id: comment.id },
-      data: { likes, dislikes }
+      data: { likes, dislikes, updatedAt: new Date() }
     });
   }
 

@@ -1,10 +1,10 @@
 import { SetMetadata } from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { user_role } from '@prisma/client';
 
 export const ROLES_KEY = 'roles';
 
 /**
  * Meghatározza, hogy milyen szerepkörök férhetnek hozzá az adott útvonalhoz.
- * Példa: @Roles(Role.ADMIN) vagy @Roles(Role.DEVELOPER, Role.ADMIN)
+ * Példa: @Roles(user_role.ADMIN) vagy @Roles(user_role.DEVELOPER, user_role.ADMIN)
  */
-export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
+export const Roles = (...roles: user_role[]) => SetMetadata(ROLES_KEY, roles);

@@ -18,6 +18,9 @@ export class AiController {
     try {
       return await this.aiService.searchBooks(query.trim());
     } catch (error: any) {
+      if (error?.__aiNoKey) {
+        return { error: 'AI_NO_KEY', message: 'Nincs megadva Gemini API kulcs!' };
+      }
       if (error?.__aiUnavailable) {
         return { error: 'AI_UNAVAILABLE', message: 'Az AI keresés átmenetileg nem elérhető. Próbáld újra később.' };
       }

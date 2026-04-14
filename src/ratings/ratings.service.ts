@@ -63,6 +63,7 @@ export class RatingsService {
             },
             data: {
               rating,
+              updatedAt: new Date(),
             },
             include: {
               book: {
@@ -86,6 +87,7 @@ export class RatingsService {
               userId: effectiveUserId,
               bookId,
               rating,
+              updatedAt: new Date(),
             },
             include: {
               book: {
@@ -113,6 +115,7 @@ export class RatingsService {
               },
               data: {
                 rating,
+                updatedAt: new Date(),
               },
               include: {
                 book: {

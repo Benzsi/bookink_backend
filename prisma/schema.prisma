@@ -7,76 +7,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model book {
+model game {
   id             Int               @id @default(autoincrement())
-  sequenceNumber Int               @unique(map: "Book_sequenceNumber_key")
+  sequenceNumber Int               @unique(map: "Game_sequenceNumber_key")
   title          String
   author         String
   coverUrl       String?
-  commentId      Int?              @unique(map: "Book_commentId_key")
+  commentId      Int?              @unique(map: "Game_commentId_key")
   rating         Int?
-  genre          book_genre
-  literaryForm   book_literaryForm
+  genre          game_genre
+  literaryForm   game_literaryForm
   lyricNote      String?           @db.Text
   createdAt      DateTime          @default(now())
   updatedAt      DateTime
   pageCount      Int
-  booklistitem   booklistitem[]
+  gamelistitem   gamelistitem[]
   comment        comment[]
   ratings        rating[]
 }
 
-model booklist {
+model gamelist {
   id           Int            @id @default(autoincrement())
   name         String
   userId       Int
   imagePath    String?        @db.Text
   createdAt    DateTime       @default(now())
   updatedAt    DateTime
-  user         user           @relation(fields: [userId], references: [id], onDelete: Cascade, map: "BookList_userId_fkey")
-  booklistitem booklistitem[]
+  user         user           @relation(fields: [userId], references: [id], onDelete: Cascade, map: "GameList_userId_fkey")
+  gamelistitem gamelistitem[]
 
-  @@index([userId], map: "BookList_userId_fkey")
+  @@index([userId], map: "GameList_userId_fkey")
 }
 
-model booklistitem {
+model gamelistitem {
   id                  Int                   @id @default(autoincrement())
-  bookListId          Int
-  bookId              Int
+  gameListId          Int
+  gameId              Int
   createdAt           DateTime              @default(now())
-  book                book                  @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "BookListItem_bookId_fkey")
-  booklist            booklist              @relation(fields: [bookListId], references: [id], onDelete: Cascade, map: "BookListItem_bookListId_fkey")
-  booklistitemgallery booklistitemgallery[]
+  game                game                  @relation(fields: [gameId], references: [id], onDelete: Cascade, map: "GameListItem_gameId_fkey")
+  gamelist            gamelist              @relation(fields: [gameListId], references: [id], onDelete: Cascade, map: "GameListItem_gameListId_fkey")
+  gamelistitemgallery gamelistitemgallery[]
 
-  @@unique([bookListId, bookId], map: "BookListItem_bookListId_bookId_key")
-  @@index([bookId], map: "BookListItem_bookId_fkey")
+  @@unique([gameListId, gameId], map: "GameListItem_gameListId_gameId_key")
+  @@index([gameId], map: "GameListItem_gameId_fkey")
 }
 
-model booklistitemgallery {
+model gamelistitemgallery {
   id             Int          @id @default(autoincrement())
-  bookListItemId Int
+  gameListItemId Int
   filePath       String       @db.Text
   fileType       String
   createdAt      DateTime     @default(now())
-  booklistitem   booklistitem @relation(fields: [bookListItemId], references: [id], onDelete: Cascade, map: "BookListItemGallery_bookListItemId_fkey")
+  gamelistitem   gamelistitem @relation(fields: [gameListItemId], references: [id], onDelete: Cascade, map: "GameListItemGallery_gameListItemId_fkey")
 
-  @@index([bookListItemId], map: "BookListItemGallery_bookListItemId_fkey")
+  @@index([gameListItemId], map: "GameListItemGallery_gameListItemId_fkey")
 }
 
 model comment {
   id          Int           @id @default(autoincrement())
   content     String        @db.Text
   userId      Int
-  bookId      Int
+  gameId      Int
   likes       Int           @default(0)
   dislikes    Int           @default(0)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime
-  book        book          @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "Comment_bookId_fkey")
+  game        game          @relation(fields: [gameId], references: [id], onDelete: Cascade, map: "Comment_gameId_fkey")
   user        user          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Comment_userId_fkey")
   commentvote commentvote[]
 
-  @@index([bookId], map: "Comment_bookId_fkey")
+  @@index([gameId], map: "Comment_gameId_fkey")
   @@index([userId], map: "Comment_userId_fkey")
 }
 
@@ -128,14 +128,14 @@ model rating {
   id        Int      @id @default(autoincrement())
   rating    Int
   userId    Int
-  bookId    Int
+  gameId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime
-  book      book     @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "Rating_bookId_fkey")
+  game      game     @relation(fields: [gameId], references: [id], onDelete: Cascade, map: "Rating_gameId_fkey")
   user      user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Rating_userId_fkey")
 
-  @@unique([userId, bookId], map: "Rating_userId_bookId_key")
-  @@index([bookId], map: "Rating_bookId_fkey")
+  @@unique([userId, gameId], map: "Rating_userId_gameId_key")
+  @@index([gameId], map: "Rating_gameId_fkey")
 }
 
 model user {
@@ -147,7 +147,7 @@ model user {
   role         user_role     @default(USER)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime
-  booklist     booklist[]
+  gamelist     gamelist[]
   comment      comment[]
   commentvote  commentvote[]
   devproject   devproject[]
@@ -225,7 +225,7 @@ enum user_role {
   ADMIN
 }
 
-enum book_genre {
+enum game_genre {
   ACTION
   PUZZLE
   RPG
@@ -250,7 +250,7 @@ enum book_genre {
   RHYTHM
 }
 
-enum book_literaryForm {
+enum game_literaryForm {
   SINGLE_PLAYER
   MULTIPLAYER
   CO_OP

@@ -2,7 +2,7 @@ export class Comment {
   id: number;
   content: string;
   userId: number;
-  bookId: number;
+  gameId: number;
   createdAt: Date;
   updatedAt: Date;
 
@@ -10,3 +10,4 @@ export class Comment {
     Object.assign(this, partial);
   }
 }
+

@@ -50,7 +50,7 @@ export class RatingsController {
   @ApiOperation({ summary: 'Értékelés hozzáadása vagy frissítése' })
   @ApiResponse({ status: 201, description: 'Értékelés sikeresen létrehozva/frissítve' })
   @ApiResponse({ status: 400, description: 'Hibás adatok' })
-  @ApiResponse({ status: 404, description: 'Könyv nem található' })
+  @ApiResponse({ status: 404, description: 'játék nem található' })
   @ApiBody({ type: CreateRatingDto })
   async createOrUpdateRating(
     @Request() req,
@@ -60,18 +60,18 @@ export class RatingsController {
     return this.ratingsService.createOrUpdateRating(userId, createRatingDto);
   }
 
-  @Put('book/:bookId')
+  @Put('game/:gameId')
   @ApiOperation({ summary: 'Meglevo ertekeles atirasa (upsert logikaval)' })
-  @ApiParam({ name: 'bookId', description: 'Konyv azonositoja', type: Number })
+  @ApiParam({ name: 'gameId', description: 'Konyv azonositoja', type: Number })
   @ApiResponse({ status: 200, description: 'Ertekeles sikeresen frissitve' })
   @ApiResponse({ status: 400, description: 'Hibas adatok' })
   async updateRating(
-    @Param('bookId', ParseIntPipe) bookId: number,
+    @Param('gameId', ParseIntPipe) gameId: number,
     @Request() req,
     @Body('rating', ParseIntPipe) rating: number,
   ) {
     const userId = this.extractUserId(req);
-    return this.ratingsService.createOrUpdateRating(userId, { bookId, rating });
+    return this.ratingsService.createOrUpdateRating(userId, { gameId, rating });
   }
 
   // User saját értékelései
@@ -84,38 +84,39 @@ export class RatingsController {
     return this.ratingsService.getUserRatings(userId);
   }
 
-  // User adott könyvre vonatkozó értékelése
-  @Get('user/:userId/book/:bookId')
-  @ApiOperation({ summary: 'Felhasználó egy könyvre vonatkozó értékelésének lekérése' })
+  // User adott játékre vonatkozó értékelése
+  @Get('user/:userId/game/:gameId')
+  @ApiOperation({ summary: 'Felhasználó egy játékre vonatkozó értékelésének lekérése' })
   @ApiParam({ name: 'userId', description: 'Felhasználó azonosítója', type: Number })
-  @ApiParam({ name: 'bookId', description: 'Könyv azonosítója', type: Number })
+  @ApiParam({ name: 'gameId', description: 'játék azonosítója', type: Number })
   @ApiResponse({ status: 200, description: 'Értékelés sikeresen lekérve' })
   @ApiResponse({ status: 404, description: 'Értékelés nem található' })
   async getUserRating(
     @Param('userId', ParseIntPipe) userId: number,
-    @Param('bookId', ParseIntPipe) bookId: number,
+    @Param('gameId', ParseIntPipe) gameId: number,
   ) {
-    return this.ratingsService.getUserRating(userId, bookId);
+    return this.ratingsService.getUserRating(userId, gameId);
   }
 
-  // Könyv összes értékelése (átlag)
-  @Get('book/:bookId')
-  @ApiOperation({ summary: 'Könyv összes értékelésének és átlagának lekérése' })
-  @ApiParam({ name: 'bookId', description: 'Könyv azonosítója', type: Number })
+  // játék összes értékelése (átlag)
+  @Get('game/:gameId')
+  @ApiOperation({ summary: 'játék összes értékelésének és átlagának lekérése' })
+  @ApiParam({ name: 'gameId', description: 'játék azonosítója', type: Number })
   @ApiResponse({ status: 200, description: 'Értékelések és átlag sikeresen lekérve' })
-  @ApiResponse({ status: 404, description: 'Könyv nem található' })
-  async getBookRatings(@Param('bookId', ParseIntPipe) bookId: number) {
-    return this.ratingsService.getBookRatings(bookId);
+  @ApiResponse({ status: 404, description: 'játék nem található' })
+  async getgameRatings(@Param('gameId', ParseIntPipe) gameId: number) {
+    return this.ratingsService.getgameRatings(gameId);
   }
 
   // Értékelés törlése
-  @Delete('book/:bookId')
+  @Delete('game/:gameId')
   @ApiOperation({ summary: 'Értékelés törlése' })
-  @ApiParam({ name: 'bookId', description: 'Könyv azonosítója', type: Number })
+  @ApiParam({ name: 'gameId', description: 'játék azonosítója', type: Number })
   @ApiResponse({ status: 200, description: 'Értékelés sikeresen törölve' })
   @ApiResponse({ status: 404, description: 'Értékelés nem található' })
-  async deleteRating(@Request() req, @Param('bookId', ParseIntPipe) bookId: number) {
+  async deleteRating(@Request() req, @Param('gameId', ParseIntPipe) gameId: number) {
     const userId = this.extractUserId(req);
-    return this.ratingsService.deleteRating(userId, bookId);
+    return this.ratingsService.deleteRating(userId, gameId);
   }
 }
+

@@ -9,7 +9,7 @@ describe('CommentsController', () => {
     updateComment: jest.Mock;
     deleteComment: jest.Mock;
     getComment: jest.Mock;
-    getBookComments: jest.Mock;
+    getgameComments: jest.Mock;
     getUserComments: jest.Mock;
   };
 
@@ -19,7 +19,7 @@ describe('CommentsController', () => {
       updateComment: jest.fn(),
       deleteComment: jest.fn().mockResolvedValue({ id: 1 }),
       getComment: jest.fn(),
-      getBookComments: jest.fn(),
+      getgameComments: jest.fn(),
       getUserComments: jest.fn(),
     };
 
@@ -50,3 +50,4 @@ describe('CommentsController', () => {
     expect(commentsServiceMock.deleteComment).toHaveBeenCalledWith(12, 7);
   });
 });
+

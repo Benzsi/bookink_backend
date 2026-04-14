@@ -6,7 +6,7 @@ export async function seedRatings() {
   // Létező értékelések törlése
   await prisma.rating.deleteMany();
 
-  const books = await prisma.book.findMany();
+  const games = await prisma.game.findMany();
   let users = await prisma.user.findMany();
 
   // Ha nincs legalább 20 user, generáljunk
@@ -16,7 +16,7 @@ export async function seedRatings() {
       const user = await prisma.user.create({
         data: {
           username: `user${users.length + i + 1}`,
-          email: `user${users.length + i + 1}@bookink.hu`,
+          email: `user${users.length + i + 1}@indiebackseat.hu`,
           passwordHash: 'dummy',
           updatedAt: new Date(),
         },
@@ -25,8 +25,8 @@ export async function seedRatings() {
     }
   }
 
-  for (const book of books) {
-    // 10-20 random értékelés könyvenként
+  for (const game of games) {
+    // 10-20 random értékelés játékenként
     const ratingsCount = Math.floor(Math.random() * 11) + 10;
     // Véletlen userId-k (ismétlődés nélkül)
     const shuffledUsers = users.sort(() => 0.5 - Math.random());
@@ -37,7 +37,7 @@ export async function seedRatings() {
         data: {
           rating,
           userId: user.id,
-          bookId: book.id,
+          gameId: game.id,
           updatedAt: new Date(),
         },
       });
@@ -46,3 +46,4 @@ export async function seedRatings() {
 
   console.log('Rating adatok sikeresen feltöltve!');
 }
+

@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 //TODO:
 //Több komment és legyen random hogy melyikhez mennyi jelenik meg!
-//Egy könyvhöz 0-5 komment legyen random, és legyen egy random user aki írta a kommentet.
+//Egy játékhöz 0-5 komment legyen random, és legyen egy random user aki írta a kommentet.
 //Lehessen likeolni a kommenteket, de ez majd később elég, most csak a kommentek létrehozása a cél.
 
 const prisma = new PrismaClient();
@@ -62,27 +62,27 @@ export async function seedComments() {
     throw new Error('Admin user nem található a komment seed futtatásához.');
   }
 
-  const books = await prisma.book.findMany({
+  const games = await prisma.game.findMany({
     select: { id: true, sequenceNumber: true },
   });
 
-  const bookIdBySequence = new Map(books.map((book) => [book.sequenceNumber, book.id]));
+  const gameIdBySequence = new Map(games.map((game) => [game.sequenceNumber, game.id]));
 
   // Létező kommentek törlése
   await prisma.comment.deleteMany();
 
   // Új kommentek létrehozása
   for (const comment of comments) {
-    const bookId = bookIdBySequence.get(comment.sequenceNumber);
+    const gameId = gameIdBySequence.get(comment.sequenceNumber);
 
-    if (!bookId) {
+    if (!gameId) {
       throw new Error(`Nem található játék a következő sequenceNumber értékkel: ${comment.sequenceNumber}`);
     }
 
     await prisma.comment.create({
       data: {
         userId: adminUser.id,
-        bookId,
+        gameId,
         content: comment.content,
         updatedAt: new Date(),
       },
@@ -91,3 +91,4 @@ export async function seedComments() {
 
   console.log('Komment adatok sikeresen feltöltve!');
 }
+

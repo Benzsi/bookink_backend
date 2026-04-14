@@ -46,10 +46,10 @@ export class CommentsController {
 
   // Komment hozzáadása
   @Post()
-  @ApiOperation({ summary: 'Új komment hozzáadása egy könyvhöz' })
+  @ApiOperation({ summary: 'Új komment hozzáadása egy játékhöz' })
   @ApiResponse({ status: 201, description: 'Komment sikeresen létrehozva' })
   @ApiResponse({ status: 400, description: 'Hibás adatok' })
-  @ApiResponse({ status: 404, description: 'Könyv nem található' })
+  @ApiResponse({ status: 404, description: 'játék nem található' })
   @ApiBody({ type: CreateCommentDto })
   async createComment(
     @Request() req,
@@ -101,17 +101,17 @@ export class CommentsController {
     return this.commentsService.getComment(commentId);
   }
 
-  // Könyv összes kommentje
-  @Get('book/:bookId')
-  @ApiOperation({ summary: 'Könyv összes kommentjének lekérése' })
-  @ApiParam({ name: 'bookId', description: 'Könyv azonosítója', type: Number })
+  // játék összes kommentje
+  @Get('game/:gameId')
+  @ApiOperation({ summary: 'játék összes kommentjének lekérése' })
+  @ApiParam({ name: 'gameId', description: 'játék azonosítója', type: Number })
   @ApiResponse({ status: 200, description: 'Kommentek sikeresen lekérve' })
-  async getBookComments(
-    @Param('bookId', ParseIntPipe) bookId: number,
+  async getgameComments(
+    @Param('gameId', ParseIntPipe) gameId: number,
     @Request() req,
   ) {
     const viewerId = this.extractUserId(req);
-    return this.commentsService.getBookComments(bookId, viewerId);
+    return this.commentsService.getgameComments(gameId, viewerId);
   }
 
   // User összes kommentje

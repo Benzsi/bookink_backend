@@ -8,21 +8,21 @@ export class CommentsService {
   constructor(private prisma: PrismaService) {}
 
   async createComment(userId: number, createCommentDto: CreateCommentDto) {
-    const { bookId, content } = createCommentDto;
+    const { gameId, content } = createCommentDto;
 
-    // Ellenőrizzük, hogy létezik-e a könyv
-    const book = await this.prisma.book.findUnique({
-      where: { id: bookId },
+    // Ellenőrizzük, hogy létezik-e a játék
+    const game = await this.prisma.game.findUnique({
+      where: { id: gameId },
     });
 
-    if (!book) {
-      throw new NotFoundException('Könyv nem található');
+    if (!game) {
+      throw new NotFoundException('játék nem található');
     }
 
     return this.prisma.comment.create({
       data: {
         userId,
-        bookId,
+        gameId,
         content,
         updatedAt: new Date(),
       },
@@ -33,7 +33,7 @@ export class CommentsService {
             username: true,
           },
         },
-        book: {
+        game: {
           select: {
             id: true,
             title: true,
@@ -66,7 +66,7 @@ export class CommentsService {
             username: true,
           },
         },
-        book: {
+        game: {
           select: {
             id: true,
             title: true,
@@ -94,9 +94,9 @@ export class CommentsService {
     });
   }
 
-  async getBookComments(bookId: number, viewerId?: number) {
+  async getgameComments(gameId: number, viewerId?: number) {
     const comments = await this.prisma.comment.findMany({
-      where: { bookId },
+      where: { gameId },
       include: {
         user: {
           select: {
@@ -133,7 +133,7 @@ export class CommentsService {
     return this.prisma.comment.findMany({
       where: { userId },
       include: {
-        book: {
+        game: {
           select: {
             id: true,
             title: true,
@@ -158,7 +158,7 @@ export class CommentsService {
             username: true,
           },
         },
-        book: {
+        game: {
           select: {
             id: true,
             title: true,
@@ -219,7 +219,7 @@ export class CommentsService {
             username: true,
           },
         },
-        book: {
+        game: {
           select: {
             id: true,
             title: true,

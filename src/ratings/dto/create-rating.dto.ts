@@ -3,11 +3,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRatingDto {
   @ApiProperty({
-    description: 'Könyv azonosítója',
+    description: 'játék azonosítója',
     example: 1
   })
   @IsInt()
-  bookId: number;
+  gameId: number;
 
   @ApiProperty({
     description: 'Értékelés (1-5 skálán)',
@@ -20,3 +20,4 @@ export class CreateRatingDto {
   @Max(5)
   rating: number;
 }
+

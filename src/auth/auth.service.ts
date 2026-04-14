@@ -206,33 +206,34 @@ export class AuthService {
     }
   }
 
-  async getSteamAchievementsByBookId(userId: number, bookId: number): Promise<any> {
+  async getSteamAchievementsBygameId(userId: number, gameId: number): Promise<any> {
     const fs = require('fs');
     const path = require('path');
     
-    const book = await this.prisma.book.findUnique({ where: { id: bookId } });
-    if (!book) {
+    const game = await this.prisma.game.findUnique({ where: { id: gameId } });
+    if (!game) {
        throw new ConflictException("Játék nem található az adatbázisban.");
     }
 
     const gamesPath = path.join(process.cwd(), 'steam_games_data.json');
     if (!fs.existsSync(gamesPath)) {
-        return { gameName: book.title, achievements: [] };
+        return { gameName: game.title, achievements: [] };
     }
 
     const gamesData = JSON.parse(fs.readFileSync(gamesPath, 'utf8'));
     if (!gamesData || !gamesData.response || !gamesData.response.games) {
-        return { gameName: book.title, achievements: [] };
+        return { gameName: game.title, achievements: [] };
     }
 
     // Keressük meg a helyi Steam mentésünkben ezt a címet
-    const steamGame = gamesData.response.games.find((g: any) => g.name === book.title);
+    const steamGame = gamesData.response.games.find((g: any) => g.name === game.title);
     
     if (!steamGame) {
-        return { gameName: book.title, achievements: [] }; // Ehhez a játékhoz nincs Steam statisztikánk
+        return { gameName: game.title, achievements: [] }; // Ehhez a játékhoz nincs Steam statisztikánk
     }
 
     // Most már megvan az appId, hívjuk meg az igazi lekérőt!
     return this.getSteamAchievements(userId, steamGame.appid.toString());
   }
 }
+

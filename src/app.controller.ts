@@ -11,7 +11,7 @@ export class AppController {
 
   @Get()
   getHello() {
-    return { message: 'Bookink API is running' };
+    return { message: 'indiebackseat API is running' };
   }
 
   // Régi endpoint kompatibilitás a frontendhez
@@ -22,7 +22,7 @@ export class AppController {
       return { error: 'Üres keresési kérés' };
     }
     try {
-      return await this.aiService.searchBooks(input.trim());
+      return await this.aiService.searchgames(input.trim());
     } catch (error: any) {
       if (error?.__aiNoKey) {
         return { error: 'AI_NO_KEY', message: 'Nincs megadva Gemini API kulcs!' };
@@ -34,3 +34,4 @@ export class AppController {
     }
   }
 }
+

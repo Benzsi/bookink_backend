@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma.service';
 describe('CommentsService', () => {
   let service: CommentsService;
   const prismaMock = {
-    book: {
+    game: {
       findUnique: jest.fn(),
     },
     comment: {
@@ -35,3 +35,4 @@ describe('CommentsService', () => {
     expect(service).toBeDefined();
   });
 });
+

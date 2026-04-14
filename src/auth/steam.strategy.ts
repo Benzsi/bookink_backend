@@ -32,7 +32,7 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
             const response = await fetch(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${profile.id}&format=json&include_appinfo=true`);
             const gamesData = await response.json();
             fs.writeFileSync(gamesPath, JSON.stringify(gamesData, null, 2), 'utf8');
-            console.log('Steam játékkönyvtár lementve a steam_games_data.json fájlba!');
+            console.log('Steam játékjátéktár lementve a steam_games_data.json fájlba!');
         } catch (error) {
             console.error('Hiba a Steam játékok lekérése közben:', error);
         }
@@ -77,12 +77,12 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
                 const steamGameNames = gamesData.response.games.map((g: any) => g.name);
 
                 // 1. Kikeressük vagy létrehozzuk a felhasználó "Játékaim" listáját
-                let myGamesList = await this.prisma.booklist.findFirst({
+                let myGamesList = await this.prisma.gamelist.findFirst({
                     where: { userId: userId, name: 'Játékaim' }
                 });
 
                 if (!myGamesList) {
-                    myGamesList = await this.prisma.booklist.create({
+                    myGamesList = await this.prisma.gamelist.create({
                         data: {
                             name: 'Játékaim',
                             userId: userId,
@@ -91,8 +91,8 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
                     });
                 }
 
-                // 2. Kikeressük az adatbázisunk "Book" táblájából azokat amik címen egyeznek
-                const matchingGamesInDb = await this.prisma.book.findMany({
+                // 2. Kikeressük az adatbázisunk "game" táblájából azokat amik címen egyeznek
+                const matchingGamesInDb = await this.prisma.game.findMany({
                     where: {
                         title: {
                             in: steamGameNames
@@ -103,20 +103,20 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
                 // 3. Hozzáadjuk a listához, ha még nincsenek benne
                 let addedCount = 0;
                 for (const dbGame of matchingGamesInDb) {
-                    const existingItem = await this.prisma.booklistitem.findUnique({
+                    const existingItem = await this.prisma.gamelistitem.findUnique({
                         where: {
-                            bookListId_bookId: {
-                                bookListId: myGamesList.id,
-                                bookId: dbGame.id
+                            gameListId_gameId: {
+                                gameListId: myGamesList.id,
+                                gameId: dbGame.id
                             }
                         }
                     });
 
                     if (!existingItem) {
-                        await this.prisma.booklistitem.create({
+                        await this.prisma.gamelistitem.create({
                             data: {
-                                bookListId: myGamesList.id,
-                                bookId: dbGame.id
+                                gameListId: myGamesList.id,
+                                gameId: dbGame.id
                             }
                         });
                         addedCount++;
@@ -133,3 +133,4 @@ export class SteamStrategy extends PassportStrategy(Strategy, 'steam') {
     return updatedUser;
   }
 }
+

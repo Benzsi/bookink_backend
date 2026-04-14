@@ -32,20 +32,20 @@ export class ListsController {
     return this.listsService.updateList(listId, updateListDto);
   }
 
-  @Post(':listId/books')
-  addBookToList(
+  @Post(':listId/games')
+  addgameToList(
     @Param('listId', ParseIntPipe) listId: number,
-    @Body('bookId', ParseIntPipe) bookId: number,
+    @Body('gameId', ParseIntPipe) gameId: number,
   ) {
-    return this.listsService.addBookToList(listId, bookId);
+    return this.listsService.addgameToList(listId, gameId);
   }
 
-  @Delete(':listId/books/:bookId')
-  removeBookFromList(
+  @Delete(':listId/games/:gameId')
+  removegameFromList(
     @Param('listId', ParseIntPipe) listId: number,
-    @Param('bookId', ParseIntPipe) bookId: number,
+    @Param('gameId', ParseIntPipe) gameId: number,
   ) {
-    return this.listsService.removeBookFromList(listId, bookId);
+    return this.listsService.removegameFromList(listId, gameId);
   }
 
   @Delete(':listId')
@@ -65,11 +65,11 @@ export class ListsController {
     return this.listsService.updateListImagePath(Number(listId), file.filename);
   }
 
-  @Post(':listId/books/:bookId/gallery')
+  @Post(':listId/games/:gameId/gallery')
   @UseInterceptors(FileInterceptor('file', multerConfig))
-  async uploadBookItemGallery(
+  async uploadgameItemGallery(
     @Param('listId') listId: string,
-    @Param('bookId') bookId: string,
+    @Param('gameId') gameId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
@@ -78,7 +78,7 @@ export class ListsController {
     const fileType = file.mimetype.startsWith('video/') ? 'VIDEO' : 'IMAGE';
     return this.listsService.addGalleryItem(
       Number(listId),
-      Number(bookId),
+      Number(gameId),
       file.filename,
       fileType,
     );
@@ -91,9 +91,10 @@ export class ListsController {
   @Post(':userId/toggle-special')
   async toggleSpecialList(
     @Param('userId', ParseIntPipe) userId: number,
-    @Body('bookId', ParseIntPipe) bookId: number,
+    @Body('gameId', ParseIntPipe) gameId: number,
     @Body('listName') listName: string,
   ) {
-    return this.listsService.toggleSpecialList(userId, bookId, listName);
+    return this.listsService.toggleSpecialList(userId, gameId, listName);
   }
 }
+

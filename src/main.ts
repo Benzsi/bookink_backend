@@ -17,7 +17,7 @@ async function bootstrap() {
   const publicPathCandidates = [
     join(__dirname, '..', 'public'),
     join(process.cwd(), 'public'),
-    join(process.cwd(), 'bookink_backend', 'public'),
+    join(process.cwd(), 'indiebackseat_backend', 'public'),
   ];
   const publicPath =
     publicPathCandidates.find((candidate) => existsSync(candidate)) ||
@@ -48,12 +48,12 @@ async function bootstrap() {
 
   // Swagger konfigurálása
   const config = new DocumentBuilder()
-    .setTitle('Bookink API')
-    .setDescription('A Bookink könyv- és értékeléskezelő alkalmazás API dokumentációja')
+    .setTitle('indiebackseat API')
+    .setDescription('A indiebackseat játék- és értékeléskezelő alkalmazás API dokumentációja')
     .setVersion('1.0')
     .addTag('auth', 'Autentikációs végpontok')
     .addTag('users', 'Felhasználó kezelés')
-    .addTag('books', 'Könyvek kezelése')
+    .addTag('games', 'játékek kezelése')
     .addTag('ratings', 'Értékelések kezelése')
     .addBearerAuth()
     .build();
@@ -64,3 +64,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
+

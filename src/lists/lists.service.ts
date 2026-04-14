@@ -11,15 +11,15 @@ export class ListsService {
 
   constructor(private prisma: PrismaService) {}
 
-  // Felhasználó listáinak lekérése könyv adatokkal
+  // Felhasználó listáinak lekérése játék adatokkal
   async getUserLists(userId: number) {
     this.logger.log(`Fetching lists for user with id: ${userId}`);
-    const results = await this.prisma.booklist.findMany({
+    const results = await this.prisma.gamelist.findMany({
       where: { userId },
       include: {
-        booklistitem: {
+        gamelistitem: {
           include: {
-            book: {
+            game: {
               select: {
                 id: true,
                 title: true,
@@ -31,7 +31,7 @@ export class ListsService {
                 lyricNote: true,
               },
             },
-            booklistitemgallery: true,
+            gamelistitemgallery: true,
           },
           orderBy: {
             createdAt: 'desc',
@@ -46,9 +46,9 @@ export class ListsService {
     // Map keys to match what the frontend expects (items and gallery)
     return results.map(list => ({
       ...list,
-      items: list.booklistitem.map(item => ({
+      items: list.gamelistitem.map(item => ({
         ...item,
-        gallery: item.booklistitemgallery
+        gallery: item.gamelistitemgallery
       }))
     }));
   }
@@ -60,7 +60,7 @@ export class ListsService {
     const { name } = createListDto;
 
     try {
-      const newList = await this.prisma.booklist.create({
+      const newList = await this.prisma.gamelist.create({
         data: {
           name,
           userId,
@@ -79,7 +79,7 @@ export class ListsService {
   async updateList(listId: number, updateListDto: UpdateListDto) {
     const { name } = updateListDto;
 
-    const list = await this.prisma.booklist.findUnique({
+    const list = await this.prisma.gamelist.findUnique({
       where: { id: listId },
     });
 
@@ -87,7 +87,7 @@ export class ListsService {
       throw new NotFoundException('Lista nem található');
     }
 
-    return this.prisma.booklist.update({
+    return this.prisma.gamelist.update({
       where: { id: listId },
       data: { 
         name,
@@ -98,7 +98,7 @@ export class ListsService {
 
   // Lista képének frissítése
   async updateListImagePath(listId: number, imagePath: string) {
-    const list = await this.prisma.booklist.findUnique({
+    const list = await this.prisma.gamelist.findUnique({
       where: { id: listId },
     });
 
@@ -106,7 +106,7 @@ export class ListsService {
       throw new NotFoundException('Lista nem található');
     }
 
-    return this.prisma.booklist.update({
+    return this.prisma.gamelist.update({
       where: { id: listId },
       data: { 
         imagePath,
@@ -115,12 +115,12 @@ export class ListsService {
     });
   }
 
-  async addGalleryItem(listId: number, bookId: number, filePath: string, fileType: string) {
-    const item = await this.prisma.booklistitem.findUnique({
+  async addGalleryItem(listId: number, gameId: number, filePath: string, fileType: string) {
+    const item = await this.prisma.gamelistitem.findUnique({
       where: {
-        bookListId_bookId: {
-          bookListId: listId,
-          bookId: bookId,
+        gameListId_gameId: {
+          gameListId: listId,
+          gameId: gameId,
         },
       },
     });
@@ -129,19 +129,19 @@ export class ListsService {
       throw new NotFoundException('Játék nem található ebben a listában');
     }
 
-    return this.prisma.booklistitemgallery.create({
+    return this.prisma.gamelistitemgallery.create({
       data: {
-        bookListItemId: item.id,
+        gameListItemId: item.id,
         filePath: filePath,
         fileType: fileType,
       },
     });
   }
 
-  // Könyv hozzáadása listához
-  async addBookToList(listId: number, bookId: number) {
+  // játék hozzáadása listához
+  async addgameToList(listId: number, gameId: number) {
     // Ellenőrizzük, hogy létezik-e a lista
-    const list = await this.prisma.booklist.findUnique({
+    const list = await this.prisma.gamelist.findUnique({
       where: { id: listId },
     });
 
@@ -149,36 +149,36 @@ export class ListsService {
       throw new NotFoundException('Lista nem található');
     }
 
-    // Ellenőrizzük, hogy létezik-e a könyv
-    const book = await this.prisma.book.findUnique({
-      where: { id: bookId },
+    // Ellenőrizzük, hogy létezik-e a játék
+    const game = await this.prisma.game.findUnique({
+      where: { id: gameId },
     });
 
-    if (!book) {
-      throw new NotFoundException('Könyv nem található');
+    if (!game) {
+      throw new NotFoundException('játék nem található');
     }
 
     // Ellenőrizzük, hogy már benne van-e
-    const existing = await this.prisma.booklistitem.findUnique({
+    const existing = await this.prisma.gamelistitem.findUnique({
       where: {
-        bookListId_bookId: {
-          bookListId: listId,
-          bookId,
+        gameListId_gameId: {
+          gameListId: listId,
+          gameId,
         },
       },
     });
 
     if (existing) {
-      throw new ConflictException('Ez a könyv már szerepel a listában');
+      throw new ConflictException('Ez a játék már szerepel a listában');
     }
 
-    return this.prisma.booklistitem.create({
+    return this.prisma.gamelistitem.create({
       data: {
-        bookListId: listId,
-        bookId,
+        gameListId: listId,
+        gameId,
       },
       include: {
-        book: {
+        game: {
           select: {
             id: true,
             title: true,
@@ -192,26 +192,26 @@ export class ListsService {
     });
   }
 
-  // Könyv eltávolítása listáról
-  async removeBookFromList(listId: number, bookId: number) {
-    const item = await this.prisma.booklistitem.findUnique({
+  // játék eltávolítása listáról
+  async removegameFromList(listId: number, gameId: number) {
+    const item = await this.prisma.gamelistitem.findUnique({
       where: {
-        bookListId_bookId: {
-          bookListId: listId,
-          bookId,
+        gameListId_gameId: {
+          gameListId: listId,
+          gameId,
         },
       },
     });
 
     if (!item) {
-      throw new NotFoundException('A könyv nem található a listában');
+      throw new NotFoundException('A játék nem található a listában');
     }
 
-    return this.prisma.booklistitem.delete({
+    return this.prisma.gamelistitem.delete({
       where: {
-        bookListId_bookId: {
-          bookListId: listId,
-          bookId,
+        gameListId_gameId: {
+          gameListId: listId,
+          gameId,
         },
       },
     });
@@ -219,7 +219,7 @@ export class ListsService {
 
   // Lista törlése
   async deleteList(listId: number) {
-    const list = await this.prisma.booklist.findUnique({
+    const list = await this.prisma.gamelist.findUnique({
       where: { id: listId },
     });
 
@@ -227,13 +227,13 @@ export class ListsService {
       throw new NotFoundException('Lista nem található');
     }
 
-    return this.prisma.booklist.delete({
+    return this.prisma.gamelist.delete({
       where: { id: listId },
     });
   }
 
   async deleteGalleryItem(itemId: number) {
-    const galleryItem = await this.prisma.booklistitemgallery.findUnique({
+    const galleryItem = await this.prisma.gamelistitemgallery.findUnique({
       where: { id: itemId },
     });
 
@@ -242,7 +242,7 @@ export class ListsService {
     }
 
     // Törlés az adatbázisból
-    await this.prisma.booklistitemgallery.delete({
+    await this.prisma.gamelistitemgallery.delete({
       where: { id: itemId },
     });
 
@@ -258,14 +258,14 @@ export class ListsService {
 
     return { success: true };
   }
-  async toggleSpecialList(userId: number, bookId: number, listName: string) {
+  async toggleSpecialList(userId: number, gameId: number, listName: string) {
     // 1. Find or create the list
-    let list = await this.prisma.booklist.findFirst({
+    let list = await this.prisma.gamelist.findFirst({
       where: { userId, name: listName },
     });
 
     if (!list) {
-      list = await this.prisma.booklist.create({
+      list = await this.prisma.gamelist.create({
         data: {
           name: listName,
           userId,
@@ -274,31 +274,32 @@ export class ListsService {
       });
     }
 
-    // 2. Check if the book is already in the list
-    const existing = await this.prisma.booklistitem.findUnique({
+    // 2. Check if the game is already in the list
+    const existing = await this.prisma.gamelistitem.findUnique({
       where: {
-        bookListId_bookId: {
-          bookListId: list.id,
-          bookId,
+        gameListId_gameId: {
+          gameListId: list.id,
+          gameId,
         },
       },
     });
 
     if (existing) {
       // Remove it
-      await this.prisma.booklistitem.delete({
+      await this.prisma.gamelistitem.delete({
         where: { id: existing.id },
       });
       return { added: false, listId: list.id };
     } else {
       // Add it
-      await this.prisma.booklistitem.create({
+      await this.prisma.gamelistitem.create({
         data: {
-          bookListId: list.id,
-          bookId,
+          gameListId: list.id,
+          gameId,
         },
       });
       return { added: true, listId: list.id };
     }
   }
 }
+

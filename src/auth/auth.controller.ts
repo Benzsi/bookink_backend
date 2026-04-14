@@ -80,12 +80,13 @@ export class AuthController {
     return this.authService.getSteamAchievements(userId, appId);
   }
 
-  @Get('steam/achievementsByBook/:bookId')
+  @Get('steam/achievementsBygame/:gameId')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Lekéri a Steam achievementeket a megadott BELSŐ adatbázis könyv ID-hez' })
+  @ApiOperation({ summary: 'Lekéri a Steam achievementeket a megadott BELSŐ adatbázis játék ID-hez' })
   @ApiResponse({ status: 200, description: 'Sikeres lekérés' })
-  async getGameAchievementsByBook(@Req() req: any, @Param('bookId', ParseIntPipe) bookId: number) {
+  async getGameAchievementsBygame(@Req() req: any, @Param('gameId', ParseIntPipe) gameId: number) {
     const userId = req.user.sub || req.user.id;
-    return this.authService.getSteamAchievementsByBookId(userId, bookId);
+    return this.authService.getSteamAchievementsBygameId(userId, gameId);
   }
 }
+

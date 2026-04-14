@@ -1,6 +1,6 @@
 import { PrismaClient, user_role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { seedBooks } from './seed-books';
+import { seedgames } from './seed-games';
 import { seedRatings } from './seed-ratings';
 import { seedComments } from './seed-comments';
 import { seedCommentVotes } from './seed-comment-votes';
@@ -16,7 +16,7 @@ async function main() {
     // 1. Admin user létrehozása
     console.log('\n1. Admin user létrehozása...');
     const username = 'admin';
-    const email = 'admin@bookink.hu';
+    const email = 'admin@indiebackseat.hu';
     const password = 'admin';
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -30,7 +30,7 @@ async function main() {
     // 1.5. Developer user létrehozása
     console.log('\nDeveloper user létrehozása...');
     const devUsername = 'developer';
-    const devEmail = 'developer@bookink.hu';
+    const devEmail = 'developer@indiebackseat.hu';
     const devPassword = 'developer';
     const devPasswordHash = await bcrypt.hash(devPassword, 10);
 
@@ -42,7 +42,7 @@ async function main() {
 
     console.log('\nMate user létrehozása...');
     const devUsernameMate = 'mate';
-    const devEmailMate = 'galganmate@bookink.hu';
+    const devEmailMate = 'galganmate@indiebackseat.hu';
     const devPasswordMate = 'mate';
     const devPasswordHashMate = await bcrypt.hash(devPasswordMate, 10);
 
@@ -53,9 +53,9 @@ async function main() {
     });
     console.log('✓ Mate user létrehozva!');
 
-    // 2. Könyvek feltöltése
-    console.log('\n2. Könyvek feltöltése...');
-    await seedBooks();
+    // 2. játékek feltöltése
+    console.log('\n2. játékek feltöltése...');
+    await seedgames();
 
     // 3. Értékelések generálása
     console.log('\n3. Értékelések generálása...');
@@ -84,3 +84,4 @@ void main().catch(async (err) => {
   console.error(err);
   process.exit(1);
 });
+

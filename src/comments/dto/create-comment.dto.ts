@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateCommentDto {
   @ApiProperty({
     description: 'Komment tartalma',
-    example: 'Ez egy fantasztikus könyv! Nagyon élveztem az olvasását.'
+    example: 'Ez egy fantasztikus játék! Nagyon élveztem az olvasását.'
   })
   @IsString()
   @IsNotEmpty()
@@ -12,9 +12,9 @@ export class CreateCommentDto {
   content: string;
 
   @ApiProperty({
-    description: 'Könyv azonosítója',
+    description: 'játék azonosítója',
     example: 1
   })
   @IsInt()
-  bookId: number;
+  gameId: number;
 }

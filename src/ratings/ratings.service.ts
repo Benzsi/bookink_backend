@@ -8,7 +8,7 @@ export class RatingsService {
   constructor(private prisma: PrismaService) {}
 
   async createOrUpdateRating(userId: number, createRatingDto: CreateRatingDto) {
-    const { bookId, rating } = createRatingDto;
+    const { gameId, rating } = createRatingDto;
 
     if (rating < 1 || rating > 5) {
       throw new BadRequestException('Az értékelés 1 és 5 között kell legyen');
@@ -36,19 +36,19 @@ export class RatingsService {
           effectiveUserId = adminUser.id;
         }
 
-        const book = await tx.book.findUnique({
-          where: { id: bookId },
+        const game = await tx.game.findUnique({
+          where: { id: gameId },
         });
 
-        if (!book) {
-          throw new NotFoundException('Könyv nem található');
+        if (!game) {
+          throw new NotFoundException('játék nem található');
         }
 
         const existingRating = await tx.rating.findUnique({
           where: {
-            userId_bookId: {
+            userId_gameId: {
               userId: effectiveUserId,
-              bookId,
+              gameId,
             },
           },
         });
@@ -56,9 +56,9 @@ export class RatingsService {
         if (existingRating) {
           const updatedRating = await tx.rating.update({
             where: {
-              userId_bookId: {
+              userId_gameId: {
                 userId: effectiveUserId,
-                bookId,
+                gameId,
               },
             },
             data: {
@@ -66,7 +66,7 @@ export class RatingsService {
               updatedAt: new Date(),
             },
             include: {
-              book: {
+              game: {
                 select: {
                   id: true,
                   title: true,
@@ -85,12 +85,12 @@ export class RatingsService {
           const createdRating = await tx.rating.create({
             data: {
               userId: effectiveUserId,
-              bookId,
+              gameId,
               rating,
               updatedAt: new Date(),
             },
             include: {
-              book: {
+              game: {
                 select: {
                   id: true,
                   title: true,
@@ -108,9 +108,9 @@ export class RatingsService {
           if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             const updatedRating = await tx.rating.update({
               where: {
-                userId_bookId: {
+                userId_gameId: {
                   userId: effectiveUserId,
-                  bookId,
+                  gameId,
                 },
               },
               data: {
@@ -118,7 +118,7 @@ export class RatingsService {
                 updatedAt: new Date(),
               },
               include: {
-                book: {
+                game: {
                   select: {
                     id: true,
                     title: true,
@@ -134,7 +134,7 @@ export class RatingsService {
           }
 
           if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
-            throw new BadRequestException('Érvénytelen felhasználó vagy könyv azonosító');
+            throw new BadRequestException('Érvénytelen felhasználó vagy játék azonosító');
           }
 
           throw error;
@@ -146,12 +146,12 @@ export class RatingsService {
     );
   }
 
-  async getUserRating(userId: number, bookId: number) {
+  async getUserRating(userId: number, gameId: number) {
     return this.prisma.rating.findUnique({
       where: {
-        userId_bookId: {
+        userId_gameId: {
           userId,
-          bookId,
+          gameId,
         },
       },
     });
@@ -161,7 +161,7 @@ export class RatingsService {
     return this.prisma.rating.findMany({
       where: { userId },
       include: {
-        book: {
+        game: {
           select: {
             id: true,
             title: true,
@@ -176,9 +176,9 @@ export class RatingsService {
     });
   }
 
-  async getBookRatings(bookId: number) {
+  async getgameRatings(gameId: number) {
     const ratingSummary = await this.prisma.rating.aggregate({
-      where: { bookId },
+      where: { gameId },
       _avg: {
         rating: true,
       },
@@ -192,26 +192,26 @@ export class RatingsService {
 
     if (totalRatings === 0) {
       return {
-        bookId,
+        gameId,
         averageRating: 0,
         totalRatings: 0,
       };
     }
 
     return {
-      bookId,
+      gameId,
       averageRating: Math.round(averageRating * 10) / 10,
       totalRatings,
     };
   }
 
-  async deleteRating(userId: number, bookId: number) {
+  async deleteRating(userId: number, gameId: number) {
     try {
       return await this.prisma.rating.delete({
         where: {
-          userId_bookId: {
+          userId_gameId: {
             userId,
-            bookId,
+            gameId,
           },
         },
       });
@@ -220,3 +220,4 @@ export class RatingsService {
     }
   }
 }
+

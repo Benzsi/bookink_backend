@@ -36,14 +36,14 @@ const generateWithFallback = async (prompt: string): Promise<string> => {
   throw new Error('Minden AI modell kvótája kimerült. Próbáld újra később.');
 };
 
-export const recommendBooksWithAI = async (userQuery: string, books: any[]): Promise<number[]> => {
+export const recommendgamesWithAI = async (userQuery: string, games: any[]): Promise<number[]> => {
   try {
     if (!apiKey) {
       throw { __aiNoKey: true, message: "AI_API_KEY nincs beállítva!" };
     }
     console.log('🤖 AI játékajánlás megkezdődött:', userQuery);
 
-    const bookList = books.map(b => ({
+    const gameList = games.map(b => ({
       id: b.id,
       title: b.title,
       developer: b.author,
@@ -60,7 +60,7 @@ Az alábbiakban megkapod az elérhető indie játékok listáját JSON formátum
 A feladatod: saját tudásodat felhasználva döntsd el, melyik játékok illenek a leíráshoz. Ne csak a megadott adatmezőkre hagyatkozz – használd azt, amit a fejlesztőkről, játékokról, műfajokról globálisan tudsz.
 
 === ELÉRHETŐ INDIE JÁTÉKOK ===
-${JSON.stringify(bookList, null, 2)}
+${JSON.stringify(gameList, null, 2)}
 
 === FELHASZNÁLÓ KÉRÉSE ===
 "${userQuery}"

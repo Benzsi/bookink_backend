@@ -8,15 +8,15 @@ export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Post('search')
-  @ApiOperation({ summary: 'Természetes nyelvű könyvajánlás AI segítségével' })
-  @ApiBody({ schema: { example: { query: 'régi klasszikus könyvek' } } })
-  @ApiResponse({ status: 200, description: 'Ajánlott könyvek listája' })
-  async searchBooks(@Body('query') query: string) {
+  @ApiOperation({ summary: 'Természetes nyelvű játékajánlás AI segítségével' })
+  @ApiBody({ schema: { example: { query: 'régi klasszikus játékek' } } })
+  @ApiResponse({ status: 200, description: 'Ajánlott játékek listája' })
+  async searchgames(@Body('query') query: string) {
     if (!query || !query.trim()) {
       throw new BadRequestException('A query mező kötelező');
     }
     try {
-      return await this.aiService.searchBooks(query.trim());
+      return await this.aiService.searchgames(query.trim());
     } catch (error: any) {
       if (error?.__aiNoKey) {
         return { error: 'AI_NO_KEY', message: 'Nincs megadva Gemini API kulcs!' };
@@ -35,6 +35,7 @@ export class AiController {
     if (!input || !input.trim()) {
       throw new BadRequestException('Üres keresési kérés');
     }
-    return this.aiService.searchBooks(input.trim());
+    return this.aiService.searchgames(input.trim());
   }
 }
+

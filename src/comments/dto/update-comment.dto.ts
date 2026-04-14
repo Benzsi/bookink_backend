@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UpdateCommentDto {
   @ApiProperty({
     description: 'Frissített komment tartalom',
-    example: 'Ahogy újra gondoltam, ez még jobb könyv, mint először gondoltam!',
+    example: 'Ahogy újra gondoltam, ez még jobb játék, mint először gondoltam!',
     required: false
   })
   @IsOptional()

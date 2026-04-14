@@ -3,7 +3,7 @@ import { RatingsService } from './ratings.service';
 type RatingRecord = {
   id: number;
   userId: number;
-  bookId: number;
+  gameId: number;
   rating: number;
   createdAt: Date;
   updatedAt: Date;
@@ -14,32 +14,32 @@ describe('RatingsService', () => {
   let ratingsStore: RatingRecord[];
   let prismaMock: any;
 
-  const buildBookPayload = (bookId: number) => ({
-    id: bookId,
-    title: `Book ${bookId}`,
+  const buildgamePayload = (gameId: number) => ({
+    id: gameId,
+    title: `game ${gameId}`,
   });
 
   beforeEach(() => {
     ratingsStore = [];
 
     const tx = {
-      book: {
+      game: {
         findUnique: jest.fn(async ({ where }: any) => {
           if (where.id === 9999) {
             return null;
           }
 
-          return buildBookPayload(where.id);
+          return buildgamePayload(where.id);
         }),
       },
       rating: {
         findUnique: jest.fn(async ({ where }: any) => {
-          const { userId, bookId } = where.userId_bookId;
-          return ratingsStore.find((item) => item.userId === userId && item.bookId === bookId) ?? null;
+          const { userId, gameId } = where.userId_gameId;
+          return ratingsStore.find((item) => item.userId === userId && item.gameId === gameId) ?? null;
         }),
         create: jest.fn(async ({ data, include }: any) => {
           const duplicate = ratingsStore.find(
-            (item) => item.userId === data.userId && item.bookId === data.bookId,
+            (item) => item.userId === data.userId && item.gameId === data.gameId,
           );
 
           if (duplicate) {
@@ -54,7 +54,7 @@ describe('RatingsService', () => {
           const created: RatingRecord = {
             id: ratingsStore.length + 1,
             userId: data.userId,
-            bookId: data.bookId,
+            gameId: data.gameId,
             rating: data.rating,
             createdAt: now,
             updatedAt: now,
@@ -62,18 +62,18 @@ describe('RatingsService', () => {
 
           ratingsStore.push(created);
 
-          if (include?.book?.select) {
+          if (include?.game?.select) {
             return {
               ...created,
-              book: buildBookPayload(data.bookId),
+              game: buildgamePayload(data.gameId),
             };
           }
 
           return created;
         }),
         update: jest.fn(async ({ where, data, include }: any) => {
-          const { userId, bookId } = where.userId_bookId;
-          const idx = ratingsStore.findIndex((item) => item.userId === userId && item.bookId === bookId);
+          const { userId, gameId } = where.userId_gameId;
+          const idx = ratingsStore.findIndex((item) => item.userId === userId && item.gameId === gameId);
 
           if (idx < 0) {
             throw new Error('Rating not found');
@@ -85,10 +85,10 @@ describe('RatingsService', () => {
             updatedAt: new Date(),
           };
 
-          if (include?.book?.select) {
+          if (include?.game?.select) {
             return {
               ...ratingsStore[idx],
-              book: buildBookPayload(bookId),
+              game: buildgamePayload(gameId),
             };
           }
 
@@ -101,7 +101,7 @@ describe('RatingsService', () => {
       $transaction: jest.fn(async (callback: any) => callback(tx)),
       rating: {
         aggregate: jest.fn(async ({ where }: any) => {
-          const filtered = ratingsStore.filter((item) => item.bookId === where.bookId);
+          const filtered = ratingsStore.filter((item) => item.gameId === where.gameId);
           const total = filtered.length;
           const avg =
             total === 0 ? null : filtered.reduce((acc, item) => acc + item.rating, 0) / total;
@@ -118,46 +118,47 @@ describe('RatingsService', () => {
   });
 
   it('new rating increments totalRatings', async () => {
-    const result = await service.createOrUpdateRating(1, { bookId: 10, rating: 5 });
+    const result = await service.createOrUpdateRating(1, { gameId: 10, rating: 5 });
 
     expect(result.action).toBe('create');
 
-    const summary = await service.getBookRatings(10);
+    const summary = await service.getgameRatings(10);
 
     expect(summary).toEqual({
-      bookId: 10,
+      gameId: 10,
       averageRating: 5,
       totalRatings: 1,
     });
   });
 
   it('rerating by same user does not increment totalRatings, only average can change', async () => {
-    const first = await service.createOrUpdateRating(1, { bookId: 10, rating: 5 });
-    const second = await service.createOrUpdateRating(1, { bookId: 10, rating: 3 });
+    const first = await service.createOrUpdateRating(1, { gameId: 10, rating: 5 });
+    const second = await service.createOrUpdateRating(1, { gameId: 10, rating: 3 });
 
     expect(first.action).toBe('create');
     expect(second.action).toBe('update');
 
-    const summary = await service.getBookRatings(10);
+    const summary = await service.getgameRatings(10);
 
     expect(summary).toEqual({
-      bookId: 10,
+      gameId: 10,
       averageRating: 3,
       totalRatings: 1,
     });
   });
 
   it('multiple users return correct average and count', async () => {
-    await service.createOrUpdateRating(1, { bookId: 10, rating: 5 });
-    await service.createOrUpdateRating(2, { bookId: 10, rating: 2 });
-    await service.createOrUpdateRating(3, { bookId: 10, rating: 4 });
+    await service.createOrUpdateRating(1, { gameId: 10, rating: 5 });
+    await service.createOrUpdateRating(2, { gameId: 10, rating: 2 });
+    await service.createOrUpdateRating(3, { gameId: 10, rating: 4 });
 
-    const summary = await service.getBookRatings(10);
+    const summary = await service.getgameRatings(10);
 
     expect(summary).toEqual({
-      bookId: 10,
+      gameId: 10,
       averageRating: 3.7,
       totalRatings: 3,
     });
   });
 });
+

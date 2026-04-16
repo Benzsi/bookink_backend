@@ -75,22 +75,49 @@ export async function seedDevLogs() {
           imagePath: "http://localhost:3000/dev_covers/history_strategy_2.png"
         }
       ]
+    },
+    {
+      id: 14,
+      name: "Kukabuvár",
+      genre: devproject_genre.ACTION,
+      literaryForm: devproject_literaryForm.SINGLE_PLAYER,
+      description: "Kukabúvár (Dumpster Diver) is a first-person educational explorer puzzle game, where you play as Máté, who has to clean up Zugló, a very dirty part of Budapest, full of stories and strange events.",
+      imagePath: "1776322298732-608424715.png",
+      developerId: 22,
+      entries: [
+        {
+          id: 8,
+          title: "Zugló szkennelése",
+          content: "A mai napon sikerült befejeznünk Zugló központi részének 3D-s szkennelését műholdas adatok alapján. A Microsoft Flight Simulatorhoz hasonló technológia elképesztő részletességet ad a környezetnek, így a játékosok valóban otthon érezhetik magukat a mocsokban.",
+          imagePath: "http://localhost:3000/uploads/1776322470241-91948707.png"
+        },
+        {
+          id: 9,
+          title: "Az 5-ös busz legendája",
+          content: "Bevezettük az első igazi 'ellenséget': az 5-ös buszt. Ez egy megállíthatatlan fenevad, amely Zugló utcáin száguldozik. Ha nem figyelsz a menetrendre és az úttestre, könnyen a kerekek alatt végezheted. A mesterséges intelligenciája még finomításra szorul, de már most félelmetes!",
+          imagePath: "http://localhost:3000/uploads/1776322419999-142023757.png"
+        }
+      ]
     }
   ];
 
   for (const project of projects) {
     const { entries, ...projectData } = project;
     
+    // Use the project's own developerId if provided, otherwise fallback to the default
+    const effectiveDeveloperId = (projectData as any).developerId || developerId;
+    delete (projectData as any).developerId;
+
     await prisma.devproject.upsert({
       where: { id: project.id },
       update: {
         ...projectData,
-        developerId: developerId,
+        developerId: effectiveDeveloperId,
         updatedAt: new Date(),
       },
       create: {
         ...projectData,
-        developerId: developerId,
+        developerId: effectiveDeveloperId,
         updatedAt: new Date(),
       },
     });

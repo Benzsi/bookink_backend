@@ -1,103 +1,125 @@
-# IndieBackseat Projekt (BookInk)
+# IndieBackseat Backend Szolgáltatás (BookInk API)
 
-Az **IndieBackseat** egy komplex webes platform, amely a játékosokat és a játékfejlesztőket hozza össze. A felhasználók játékokat értékelhetnek, "backseat" stílusú tippekkel/kommentekkel láthatják el őket, valamint a fejlesztők bemutathatják saját, készülő projektjeiket (DevLogs), amelyekre a közösség reagálhat (Upvote, Kedvencek).
-
-A projekt két fő komponensből áll: egy modern **React / Vite** alapú Frontendből, és egy masszív **NestJS / Prisma** alapú Backendből.
+Ez a dokumentáció az **IndieBackseat** platform szerveroldali (Backend) architektúrájának és API szolgáltatásainak teljes körű technikai leírását tartalmazza. Az API biztosítja a kliens alkalmazások adatigényeinek kiszolgálását, a hitelesítést, valamint a Steam alapú integrációs feladatokat.
 
 ---
 
-## 🏛️ Áttekintés
+## 1. Architektúra és Technológiai Stack
 
-- **Frontend Repository**: `front/bookink_frontend/`
-- **Backend Repository**: `back/bookink_backend/`
-- **Fő Keresztezések (API URL)**: Alapértelmezésben a Frontend a `http://localhost:3000/api` végpontokon kommunikál a Backenddel.
+A szolgáltatás többrétegű, moduláris mikro-architektúrára épül, biztosítva az üzleti logika szétválasztását és a hosszú távú skálázhatóságot.
 
----
-
-## 🎨 1. Frontend (Kliens)
-
-A kliens alkalmazás nyújtja a letisztult, modern és dinamikus felhasználói élményt (UI).
-
-### Alkalmazott Technológiák
-- **React 18** (TypeScript)
-- **Vite** (Rendkívül gyors fejlesztői környezet)
-- **Tailwind CSS** (Utility-first dizájn keretrendszer)
-- **React Router DOM** (Kliens oldali navigáció)
-- **Lucide-React** (Vektoros ikon készlet)
-
-### Telepítés és Indítás
-1. Lépj be a frontend mappába a terminálból:
-   ```bash
-   cd path/to/front/bookink_frontend
-   ```
-2. Telepítsd a függőségeket:
-   ```bash
-   npm install
-   ```
-3. Indítsd el a fejlesztői szervert:
-   ```bash
-   npm run dev
-   ```
-Az oldal a `http://localhost:5173` címen fog behozni egy azonnal frissülő felületet.
-
-### Fő Mappaszerkezet (Frontend)
-- `src/components/`: Újrahasznosítható UI elemek (Nav, Modals, Kártyák).
-- `src/pages/`: Integrált képernyő-nézetek (Home, GameDetails, DevLogs, Profile).
-- `src/index.css`: Globális beállítások és Tailwind konfiguráció.
-
-> **Megjegyzés a szerkesztőhöz**: Ha a VSCode sárgával aláhúzza az `@apply` vagy `@tailwind` CSS szabályokat az `index.css`-ben, az csak egy esztétikai hiba (Linter warning), a kód így is tökéletesen fut a Vite feldolgozásában. A `.vscode/settings.json`-ban ezt orvosoltuk.
+- **Központi Keretrendszer**: [NestJS](https://nestjs.com/) v11 (Node.js TypeScript alapokon)
+- **Adatbázis Kezelő (ORM)**: [Prisma](https://www.prisma.io/) v6
+- **Hitelesítési protokollok**: Passport.js, JWT (JSON Web Token), Express-Session
+- **Külső API Integrációk**: Steam Web API (OIDC alapon a `passport-steam` csomaggal)
+- **Fájlrendszer (Storage)**: Multer middleware közvetlen lemezes tároláshoz
+- **API Dokumentáció**: Integrált OpenAPI 3.0 (Swagger) modul
+- **Formátum / Validáció**: `class-validator` és `class-transformer` globális pipe-ok
 
 ---
 
-## ⚙️ 2. Backend (Szerver API)
+## 2. Rendszerkövetelmények és Üzembe Helyezés
 
-Az adatok mentéséért, a fájlfeltöltésért, a biztonságos bejelentkezésekért és az üzleti logikáért (pl. ki törölhet kommentet) felelős réteg.
+### 2.1. Függőségek telepítése
+A Node.js környezet megléte kötelező. Javasolt verzió: Node.js 18.x LTS vagy újabb.
 
-### Alkalmazott Technológiák
-- **Node.js + NestJS** (TypeScript)
-- **Prisma ORM** (Biztonságos adatbázis kezelés)
-- **Kapcsolódás**: MySQL / PostgreSQL / SQLite
-- **Autentikáció**: JWT (JSON Web Tokens), Passport, Session
-- **Dokumentáció**: Swagger / OpenAPI
-- **Fájl feltöltés**: Multer
+```bash
+cd indiebackseat_backend
+npm install
+```
 
-### Telepítés és Indítás
-1. Lépj be a backend mappába:
-   ```bash
-   cd path/to/back/bookink_backend
-   ```
-2. Telepítsd a függőségeket:
-   ```bash
-   npm install
-   ```
-3. Hozd létre a `.env` fájlt (a projekt gyökerében), például a következő tartalommal:
-   ```env
-   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
-   JWT_SECRET="biztonsagos_szerver_kulcs"
-   SESSION_SECRET="titkos_session_kulcs"
-   STEAM_API_KEY="A_TE_STEAM_API_KULCSOD_IDE"
-   PORT=3000
-   ```
-4. Futtasd le a Prisma adatbázis sémát és töltsd fel a kezdőadatokkal (Seeding):
-   ```bash
-   npx prisma db push
-   npx prisma db seed
-   ```
-5. Indítsd el a backendet a folyamatos megfigyelés (watch) funkcióval:
-   ```bash
-   npm run start:dev
-   ```
+### 2.2. Környezeti Változók Konfigurációja
+Az alkalmazás biztonsági házirendje megköveteli a `.env` fájl meglétét a gyökérkönyvtárban. Használja az alábbi konfigurációs mintát:
 
-A szerver alapesetben elkezdi kiszolgálni a felé érkező kéréseket a `http://localhost:3000` porton.
+```env
+# Adatbázis kapcsolat (MySQL/PostgreSQL specifikus URL)
+DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-### API Dokumentáció (Swagger)
-Minden elérhető API végpont - a paramétereivel és példa JSON bemenetekkel - vizuálisan elérhető a böngészőben. A teszteléshez nyisd meg az alábbi linket, ha fut a backend:
-- **[http://localhost:3000/api](http://localhost:3000/api)**
+# Hitelesítési (Auth) Kulcsok
+JWT_SECRET="biztonsagos_jwt_titkositasi_kulcs_generate_uuid"
+SESSION_SECRET="biztonsagos_session_titkositasi_kulcs"
+
+# Külső Szolgáltatások (Integrációk)
+STEAM_API_KEY="egyedi_steam_api_kulcs_a_steamworks_portalrol"
+AI_API_KEY="egyedi_gemini_api_kulcs_a_google_ai_studiobol"
+
+# Hálózati Beállítások
+PORT=3000
+```
+*(A `.env` fájl szigorúan fel van véve a `.gitignore` listára, így elkerülhető a kulcsok publikus szivárgása. Éles környezetben Használjon Docker Secrets vagy Vault szolgáltatásokat.)*
+
+### 2.3. Adatbázis Modell Kialakítása és Szinkronizáció
+Az adatbázis sémát a `prisma/schema.prisma` fájl definiálja. Rendszer telepítésekor futtassa az alábbit:
+
+```bash
+npx prisma db push
+```
+
+**Adatfeltöltés (Seeding)**
+A rendszerspecifikus alap adatok (példa projektek, kategóriák, fiókok) beillesztéséhez inicializálja a seedert:
+
+```bash
+npx prisma db seed
+```
+> **Alapértelmezett, seed által létrehozott fiókok:**
+> - Rendszergazda (Admin): Username: `admin`, Password: `admin`
+> - Minta Fejlesztő (Dev): Username: `developer`, Password: `developer` és Username: `mate` Password: `mate`
+
+### 2.4. A Szolgáltatás Futtatása
+A fejlesztői mód (automatikus kódfordítással, HMR és TypeScript ellenőrzéssel):
+
+```bash
+npm run start:dev
+```
+A szoftver a `http://localhost:3000` címen lesz elérhető.
 
 ---
 
-## 🔒 Hitelesítés & Szerepkörök (Roles)
-- **Alapértelmezett Admin**: `admin` / `admin` (Jogosult mások projektjeinek és kommentjeinek törlésére)
-- **Alapértelmezett Fejlesztő**: `developer` / `developer`, valamint `mate` (Csinálhatnak DevLogokat, frissíthetik azok állapotát)
+## 3. Rendszer Működése és Adatstruktúra
 
-Gyakorlatilag minden API végpontnál, ami módosítással jár (POST, DELETE) szükséges a `Bearer Token` elküldése az Auth headerben (Amit a Sikeres bejelentkezés állít be automatikusan az alkalmazásban, vagy Swagger esetén manuálisan kell felmásolni).
+### 3.1. Fő Modulok Szeparációja
+- `src/auth/` : Tartalmazza a JWT stratégia és a Guard-ok implementációját. Felel a `/api/auth/register` és `/login`, valamint a Steam kapcsolatok kialakításáért (`/api/auth/steam`).
+- `src/games/` : Játékok kikeresése, lapozása, és a külső megjelenítéshez szükséges adatok generálása.
+- `src/ratings/` : Matematikai aggregációk kezelése a felhasználói értékelések (1-5 skála) feldolgozására. Megakadályozza a jogosulatlan dupla pontozást.
+- `src/comments/` : Interaktív beszélgető szálak. Ide kapcsolódóan van implementálva a "Comment Vote" (Upvote/Downvote) rendszer.
+- `src/devlogs/` : Fejlesztői útinaplók publikálására szolgáló modul. Képfeltöltést (Multer), százalékos `progress` követést és jogosultságkezelést foglal magába.
+
+### 3.2. Adatbázis Kapcsolatok (Prisma)
+- **User**: Központi entitás. Rendelkezik egy szerepkör (`role`) flaggel (USER, DEVELOPER, ADMIN).
+- **Game**: Tárolja a globális adatbázist. Relációban áll a `Rating` és `Comment` táblákkal.
+- **DevProject**: Kizárólag a DEVELOPER userek által birtokolt projektek gyűjteménye. Rendelkezik One-to-Many (`DevLogEntry`) és Many-to-Many (Wishlist / Favorites) kapcsolatokkal.
+
+---
+
+## 4. API Dokumentáció és Integráció
+
+A rendszer integrált **Swagger (OpenAPI 3.0)** modullal bír. Amint a kliens szerver felállt, vizuálisan tesztelhető az összes végpont (End-Point) a struktúra megértése céljából:
+
+- Keresd fel: **[http://localhost:3000/api](http://localhost:3000/api)**
+
+### Biztonság és Interceptorok
+Minden API mutációs végpont (`POST`, `PUT`, `DELETE` és szenzitív `GET` adatok) szigorított. Hívásuk a HTTP `Authorization` fejlécbe ágyazott `Bearer Token`-t követel meg. A NestJS globális validációs szűrői (Pipes) DTO (Data Transfer Object) validálás révén azonnal kizárják a hiányzó paramétereket (`400 Bad Request`).
+
+---
+
+## 5. Tesztelés beállítása
+
+Az automatizált egység- és integrációs tesztekhez a `Jest` keretrendszer van definiálva az alábbi scriptekkel:
+
+```bash
+# Egységtesztek futtatása a szolgáltatások validálására
+npm run test
+
+# End-to-End tesztek folyamata (vezérlő layer tesztelés)
+npm run test:e2e
+```
+
+## 6. Telepítés Produckciós Környezetre (Deployment)
+
+Az optimalizált élesítés menete a következőképpen néz ki (PM2, Docker, vagy PaaS felhőszolgáltatás esetén):
+
+```bash
+npm run build
+npm run start:prod
+```
+Ezután az elkészült `dist/` mappa tartalma biztonságosan hosztolható. Ne feledkezzen meg az éles `.env` fájl biztosításáról az adott szerveren. Média feltöltéseket dedikált S3 Storage-ra vagy persistens `/public/uploads` könyvtárba érdemes irányítani Docker volumennel.

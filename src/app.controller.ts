@@ -1,7 +1,10 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { AiService } from './ai/ai.service';
+import { AiQueryDto } from './ai/dto/ai-query.dto';
 
+@ApiTags('system')
 @Controller()
 export class AppController {
   constructor(
@@ -10,13 +13,18 @@ export class AppController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'API állapotának ellenőrzése' })
+  @ApiResponse({ status: 200, description: 'Az API fut és elérhető' })
   getHello() {
     return { message: 'indiebackseat API is running' };
   }
 
   // Régi endpoint kompatibilitás a frontendhez
   @Post('ai-filter')
-  async aiFilter(@Body() body: { prompt?: string; query?: string }) {
+  @ApiOperation({ summary: 'Legacy AI keresési endpoint prompt vagy query mezővel' })
+  @ApiBody({ type: AiQueryDto })
+  @ApiResponse({ status: 200, description: 'AI keresési eredmény vagy hibaobjektum' })
+  async aiFilter(@Body() body: AiQueryDto) {
     const input = body.prompt || body.query;
     if (!input || !input.trim()) {
       return { error: 'Üres keresési kérés' };

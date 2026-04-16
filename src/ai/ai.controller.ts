@@ -1,6 +1,7 @@
 import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { AiService } from './ai.service';
+import { AiQueryDto } from './dto/ai-query.dto';
 
 @ApiTags('ai')
 @Controller(['api/ai', 'ai'])
@@ -30,7 +31,10 @@ export class AiController {
 
   // Régi endpoint kompatibilitás (frontend /ai-filter + prompt paramétert használ)
   @Post('filter')
-  async aiFilter(@Body() body: { prompt?: string; query?: string }) {
+  @ApiOperation({ summary: 'Legacy AI szűrő endpoint prompt vagy query mezővel' })
+  @ApiBody({ type: AiQueryDto })
+  @ApiResponse({ status: 200, description: 'AI keresési eredmény vagy hibaobjektum' })
+  async aiFilter(@Body() body: AiQueryDto) {
     const input = body.prompt || body.query;
     if (!input || !input.trim()) {
       throw new BadRequestException('Üres keresési kérés');

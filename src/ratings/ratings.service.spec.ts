@@ -1,4 +1,5 @@
 import { RatingsService } from './ratings.service';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 type RatingRecord = {
   id: number;
@@ -23,6 +24,19 @@ describe('RatingsService', () => {
     ratingsStore = [];
 
     const tx = {
+      user: {
+        findUnique: jest.fn(async ({ where }: any) => {
+          if (where?.id) {
+            return { id: where.id };
+          }
+
+          if (where?.username === 'admin') {
+            return { id: 1 };
+          }
+
+          return null;
+        }),
+      },
       game: {
         findUnique: jest.fn(async ({ where }: any) => {
           if (where.id === 9999) {

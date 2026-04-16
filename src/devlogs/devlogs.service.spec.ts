@@ -3,6 +3,7 @@ import { DevlogsService } from './devlogs.service';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { PrismaService } from '../prisma.service';
 
 describe('DevlogsService', () => {
   let service: DevlogsService;
@@ -11,6 +12,36 @@ describe('DevlogsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DevlogsService,
+        {
+          provide: PrismaService,
+          useValue: {
+            devproject: {
+              create: jest.fn(),
+              findMany: jest.fn(),
+              findUnique: jest.fn(),
+              update: jest.fn(),
+              delete: jest.fn(),
+            },
+            devlogentry: {
+              create: jest.fn(),
+              findUnique: jest.fn(),
+              update: jest.fn(),
+              delete: jest.fn(),
+            },
+            devprojectfavorite: {
+              findUnique: jest.fn(),
+              create: jest.fn(),
+              delete: jest.fn(),
+              findMany: jest.fn(),
+            },
+            devprojectwishlist: {
+              findUnique: jest.fn(),
+              create: jest.fn(),
+              delete: jest.fn(),
+              findMany: jest.fn(),
+            },
+          },
+        },
         {
           provide: JwtService,
           useValue: { verify: jest.fn() },

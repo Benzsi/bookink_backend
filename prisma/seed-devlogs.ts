@@ -104,6 +104,12 @@ export async function seedDevLogs() {
   for (const project of projects) {
     const { entries, ...projectData } = project;
     
+    // Set random progress (Kukabuvár = 100, others random 5-90)
+    let progress = Math.floor(Math.random() * 85) + 5;
+    if (project.name.toLowerCase().includes('kukabuvár') || project.name.toLowerCase().includes('kukabúvár')) {
+      progress = 100;
+    }
+
     // Use the project's own developerId if provided, otherwise fallback to the default
     const effectiveDeveloperId = (projectData as any).developerId || developerId;
     delete (projectData as any).developerId;
@@ -112,11 +118,13 @@ export async function seedDevLogs() {
       where: { id: project.id },
       update: {
         ...projectData,
+        progress,
         developerId: effectiveDeveloperId,
         updatedAt: new Date(),
       },
       create: {
         ...projectData,
+        progress,
         developerId: effectiveDeveloperId,
         updatedAt: new Date(),
       },

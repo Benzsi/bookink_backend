@@ -88,6 +88,13 @@ export class DevlogsService {
     });
   }
 
+  async updateProjectProgress(projectId: number, progress: number) {
+    return this.prisma.devproject.update({
+      where: { id: projectId },
+      data: { progress: Math.min(100, Math.max(0, progress)), updatedAt: new Date() },
+    });
+  }
+
   async deleteProject(id: number) {
     return this.prisma.devproject.delete({
       where: { id },

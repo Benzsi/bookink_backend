@@ -116,6 +116,7 @@ model devproject {
   developerId  Int
   createdAt    DateTime                @default(now())
   updatedAt    DateTime
+  progress     Int                     @default(0)
   devlogentry  devlogentry[]
   favorites    devprojectfavorite[]
   upvotes      devprojectwishlist[]

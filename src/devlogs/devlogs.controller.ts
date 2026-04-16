@@ -56,6 +56,18 @@ export class DevlogsController {
     return this.devlogsService.updateProjectImagePath(id, file.filename);
   }
 
+  @Post(':id/progress')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.DEVELOPER)
+  async updateProgress(@Req() req: any, @Param('id', ParseIntPipe) id: number, @Body('progress', ParseIntPipe) progress: number) {
+    const project = await this.devlogsService.getProjectById(id);
+    if (!project) throw new NotFoundException('Projekt nem található');
+    if (project.developerId !== req.user.sub) {
+      throw new ForbiddenException('Csak a saját projekted haladását módosíthatod');
+    }
+    return this.devlogsService.updateProjectProgress(id, progress);
+  }
+
   @Post(':projectId/entries')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.DEVELOPER)

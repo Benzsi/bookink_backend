@@ -1,98 +1,103 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# IndieBackseat Projekt (BookInk)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Az **IndieBackseat** egy komplex webes platform, amely a játékosokat és a játékfejlesztőket hozza össze. A felhasználók játékokat értékelhetnek, "backseat" stílusú tippekkel/kommentekkel láthatják el őket, valamint a fejlesztők bemutathatják saját, készülő projektjeiket (DevLogs), amelyekre a közösség reagálhat (Upvote, Kedvencek).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A projekt két fő komponensből áll: egy modern **React / Vite** alapú Frontendből, és egy masszív **NestJS / Prisma** alapú Backendből.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🏛️ Áttekintés
 
-## Project setup
+- **Frontend Repository**: `front/bookink_frontend/`
+- **Backend Repository**: `back/bookink_backend/`
+- **Fő Keresztezések (API URL)**: Alapértelmezésben a Frontend a `http://localhost:3000/api` végpontokon kommunikál a Backenddel.
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 🎨 1. Frontend (Kliens)
 
-```bash
-# development
-$ npm run start
+A kliens alkalmazás nyújtja a letisztult, modern és dinamikus felhasználói élményt (UI).
 
-# watch mode
-$ npm run start:dev
+### Alkalmazott Technológiák
+- **React 18** (TypeScript)
+- **Vite** (Rendkívül gyors fejlesztői környezet)
+- **Tailwind CSS** (Utility-first dizájn keretrendszer)
+- **React Router DOM** (Kliens oldali navigáció)
+- **Lucide-React** (Vektoros ikon készlet)
 
-# production mode
-$ npm run start:prod
-```
+### Telepítés és Indítás
+1. Lépj be a frontend mappába a terminálból:
+   ```bash
+   cd path/to/front/bookink_frontend
+   ```
+2. Telepítsd a függőségeket:
+   ```bash
+   npm install
+   ```
+3. Indítsd el a fejlesztői szervert:
+   ```bash
+   npm run dev
+   ```
+Az oldal a `http://localhost:5173` címen fog behozni egy azonnal frissülő felületet.
 
-## Run tests
+### Fő Mappaszerkezet (Frontend)
+- `src/components/`: Újrahasznosítható UI elemek (Nav, Modals, Kártyák).
+- `src/pages/`: Integrált képernyő-nézetek (Home, GameDetails, DevLogs, Profile).
+- `src/index.css`: Globális beállítások és Tailwind konfiguráció.
 
-```bash
-# unit tests
-$ npm run test
+> **Megjegyzés a szerkesztőhöz**: Ha a VSCode sárgával aláhúzza az `@apply` vagy `@tailwind` CSS szabályokat az `index.css`-ben, az csak egy esztétikai hiba (Linter warning), a kód így is tökéletesen fut a Vite feldolgozásában. A `.vscode/settings.json`-ban ezt orvosoltuk.
 
-# e2e tests
-$ npm run test:e2e
+---
 
-# test coverage
-$ npm run test:cov
-```
+## ⚙️ 2. Backend (Szerver API)
 
-## Deployment
+Az adatok mentéséért, a fájlfeltöltésért, a biztonságos bejelentkezésekért és az üzleti logikáért (pl. ki törölhet kommentet) felelős réteg.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Alkalmazott Technológiák
+- **Node.js + NestJS** (TypeScript)
+- **Prisma ORM** (Biztonságos adatbázis kezelés)
+- **Kapcsolódás**: MySQL / PostgreSQL / SQLite
+- **Autentikáció**: JWT (JSON Web Tokens), Passport, Session
+- **Dokumentáció**: Swagger / OpenAPI
+- **Fájl feltöltés**: Multer
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Telepítés és Indítás
+1. Lépj be a backend mappába:
+   ```bash
+   cd path/to/back/bookink_backend
+   ```
+2. Telepítsd a függőségeket:
+   ```bash
+   npm install
+   ```
+3. Hozd létre a `.env` fájlt (a projekt gyökerében), például a következő tartalommal:
+   ```env
+   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
+   JWT_SECRET="biztonsagos_szerver_kulcs"
+   SESSION_SECRET="titkos_session_kulcs"
+   STEAM_API_KEY="A_TE_STEAM_API_KULCSOD_IDE"
+   PORT=3000
+   ```
+4. Futtasd le a Prisma adatbázis sémát és töltsd fel a kezdőadatokkal (Seeding):
+   ```bash
+   npx prisma db push
+   npx prisma db seed
+   ```
+5. Indítsd el a backendet a folyamatos megfigyelés (watch) funkcióval:
+   ```bash
+   npm run start:dev
+   ```
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+A szerver alapesetben elkezdi kiszolgálni a felé érkező kéréseket a `http://localhost:3000` porton.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### API Dokumentáció (Swagger)
+Minden elérhető API végpont - a paramétereivel és példa JSON bemenetekkel - vizuálisan elérhető a böngészőben. A teszteléshez nyisd meg az alábbi linket, ha fut a backend:
+- **[http://localhost:3000/api](http://localhost:3000/api)**
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🔒 Hitelesítés & Szerepkörök (Roles)
+- **Alapértelmezett Admin**: `admin` / `admin` (Jogosult mások projektjeinek és kommentjeinek törlésére)
+- **Alapértelmezett Fejlesztő**: `developer` / `developer`, valamint `mate` (Csinálhatnak DevLogokat, frissíthetik azok állapotát)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Gyakorlatilag minden API végpontnál, ami módosítással jár (POST, DELETE) szükséges a `Bearer Token` elküldése az Auth headerben (Amit a Sikeres bejelentkezés állít be automatikusan az alkalmazásban, vagy Swagger esetén manuálisan kell felmásolni).

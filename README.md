@@ -4,14 +4,6 @@ Ez a dokumentáció az **IndieBackseat** platform szerveroldali (Backend) archit
 
 ---
 
-## 📂 Dokumentáció és Tervezés
-
-A backendhez kapcsolódó tervezési dokumentumok és adatbázis sémák a [docs](./docs) mappában találhatóak:
-
-- **Adatbázis Diagram**: A rendszer adatmodelljének és entitás-kapcsolatainak vizuális ábrázolása (ER diagram). [Megtekintés](./docs/adatbazisdiagram.png)
-- **SQL Séma**: Az adatbázis fizikai felépítését és a táblák létrehozását tartalmazó SQL szkript. [Megtekintés](./docs/indiebackseat.sql)
-
----
 
 ## 1. Architektúra és Technológiai Stack
 
@@ -105,6 +97,14 @@ A szoftver a `http://localhost:3000` címen lesz elérhető.
 A rendszer integrált **Swagger (OpenAPI 3.0)** modullal bír. Amint a kliens szerver felállt, vizuálisan tesztelhető az összes végpont (End-Point) a struktúra megértése céljából:
 
 - Keresd fel: **[http://localhost:3000/api](http://localhost:3000/api)**
+
+### 📂 Dokumentáció és Tervezés
+
+A backendhez kapcsolódó kiegészítő tervezési dokumentumok és adatbázis sémák a [docs](./docs) mappában találhatóak:
+
+- **Adatbázis Diagram**: A rendszer adatmodelljének és entitás-kapcsolatainak vizuális ábrázolása (ER diagram). [Megtekintés](./docs/adatbazisdiagram.png)
+- **SQL Séma**: Az adatbázis fizikai felépítését és a táblák létrehozását tartalmazó SQL szkript. [Megtekintés](./docs/indiebackseat.sql)
+
 
 ### Biztonság és Interceptorok
 Minden API mutációs végpont (`POST`, `PUT`, `DELETE` és szenzitív `GET` adatok) szigorított. Hívásuk a HTTP `Authorization` fejlécbe ágyazott `Bearer Token`-t követel meg. A NestJS globális validációs szűrői (Pipes) DTO (Data Transfer Object) validálás révén azonnal kizárják a hiányzó paramétereket (`400 Bad Request`).

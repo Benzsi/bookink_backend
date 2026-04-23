@@ -6,8 +6,15 @@ const prisma = new PrismaClient();
 export async function seedDevLogs() {
   console.log('Dev Log adatok frissítése és seedelése...');
 
-  // Fix developer user ID (a korábbi lekérdezés alapján id: 2)
-  const developerId = 2;
+  // Felhasználók dinamikus lekérdezése
+  const devUser = await prisma.user.findFirst({ where: { username: 'developer' } });
+  const mateUser = await prisma.user.findFirst({ where: { username: 'mate' } });
+
+  if (!devUser || !mateUser) {
+    throw new Error('Nem található a "developer" vagy "mate" nevű felhasználó!');
+  }
+
+  const developerId = devUser.id;
 
   const projects = [
     {
@@ -83,7 +90,7 @@ export async function seedDevLogs() {
       literaryForm: devproject_literaryForm.SINGLE_PLAYER,
       description: "Kukabúvár (Dumpster Diver) is a first-person educational explorer puzzle game, where you play as Máté, who has to clean up Zugló, a very dirty part of Budapest, full of stories and strange events.",
       imagePath: "1776322298732-608424715.png",
-      developerId: 22,
+      developerId: mateUser.id,
       entries: [
         {
           id: 8,

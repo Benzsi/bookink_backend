@@ -4,6 +4,15 @@ Ez a dokumentáció az **IndieBackseat** platform szerveroldali (Backend) archit
 
 ---
 
+## 📂 Dokumentáció és Tervezés
+
+A backendhez kapcsolódó tervezési dokumentumok és adatbázis sémák a [docs](./docs) mappában találhatóak:
+
+- **Adatbázis Diagram**: A rendszer adatmodelljének és entitás-kapcsolatainak vizuális ábrázolása (ER diagram). [Megtekintés](./docs/adatbazisdiagram.png)
+- **SQL Séma**: Az adatbázis fizikai felépítését és a táblák létrehozását tartalmazó SQL szkript. [Megtekintés](./docs/indiebackseat.sql)
+
+---
+
 ## 1. Architektúra és Technológiai Stack
 
 A szolgáltatás többrétegű, moduláris mikro-architektúrára épül, biztosítva az üzleti logika szétválasztását és a hosszú távú skálázhatóságot.

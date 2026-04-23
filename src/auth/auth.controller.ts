@@ -11,7 +11,7 @@ import { SteamAuthGuard } from './steam-auth.guard';
 @ApiTags('auth')
 @Controller(['api/auth', 'auth'])
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   @ApiOperation({ summary: 'Új felhasználó regisztrálása' })
@@ -23,6 +23,7 @@ export class AuthController {
     const result = await this.authService.register(dto);
     return { message: 'Sikeres regisztráció', user: result.user, token: result.token };
   }
+
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
